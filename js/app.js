@@ -32,6 +32,7 @@ async function init(sportId) {
   document.documentElement.style.setProperty('--primary', sport.theme.primary);
   document.documentElement.style.setProperty('--primary-light', sport.theme.primaryLight);
   document.documentElement.style.setProperty('--primary-dark', sport.theme.primaryDark);
+  document.documentElement.style.setProperty('--header-bg', sport.theme.primary);
 
   // Load player data
   const res = await fetch(sport.dataFile);
