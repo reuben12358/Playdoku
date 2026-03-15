@@ -16,6 +16,16 @@
   --shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
+[data-theme="dark"] {
+  --bg: #121212;
+  --card: #1E1E1E;
+  --text: #E0E0E0;
+  --text-light: #999;
+  --cell-border: #333;
+  --cell-hover: #2A2A2A;
+  --shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -401,6 +411,14 @@ main {
   animation: popIn 0.3s ease;
 }
 
+[data-theme="dark"] .grid-cell.correct {
+  background: #1B5E20;
+}
+
+[data-theme="dark"] .grid-cell.correct .cell-player {
+  color: #C8E6C9;
+}
+
 .grid-cell.correct .cell-player {
   color: var(--primary-dark);
   font-size: 0.7rem;
@@ -411,6 +429,10 @@ main {
   background: #FFCDD2;
   cursor: default;
   animation: shake 0.4s ease;
+}
+
+[data-theme="dark"] .grid-cell.incorrect {
+  background: #5D1A1A;
 }
 
 .grid-cell.locked {
@@ -489,7 +511,8 @@ main {
 
 .modal-content {
   position: relative;
-  background: white;
+  background: var(--card);
+  color: var(--text);
   border-radius: 12px;
   padding: 1.5rem;
   max-width: 400px;
@@ -525,13 +548,13 @@ main {
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #999;
+  color: var(--text-light);
   padding: 0.25rem;
   line-height: 1;
 }
 
 .modal-close:hover {
-  color: #333;
+  color: var(--text);
 }
 
 .modal-body ul {
@@ -581,6 +604,8 @@ main {
   font-size: 1rem;
   outline: none;
   transition: border-color 0.2s;
+  background: var(--bg);
+  color: var(--text);
 }
 
 .search-input:focus {
@@ -653,11 +678,20 @@ main {
 
 .btn-secondary {
   background: #E0E0E0;
-  color: var(--text);
+  color: #1A1A1A;
 }
 
 .btn-secondary:hover {
   background: #BDBDBD;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: #333;
+  color: #E0E0E0;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: #444;
 }
 
 /* Game Over Grid */
@@ -685,8 +719,8 @@ main {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: #333;
-  color: white;
+  background: var(--text);
+  color: var(--bg);
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius);
   font-size: 0.9rem;

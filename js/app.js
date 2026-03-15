@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=8';
-import { GameState } from './game.js?v=8';
-import { showToast } from './utils.js?v=8';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=8';
-import { SPORTS } from './sports.js?v=8';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=9';
+import { GameState } from './game.js?v=9';
+import { showToast } from './utils.js?v=9';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=9';
+import { SPORTS } from './sports.js?v=9';
 
 let players = [];
 let puzzle = null;
@@ -584,7 +584,31 @@ function setupHomeButton() {
   });
 }
 
+// Dark mode
+function setupThemeToggle() {
+  const btn = document.getElementById('theme-btn');
+  const saved = localStorage.getItem('playdoku_theme');
+  if (saved === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    btn.textContent = '\u2600'; // sun
+  }
+
+  btn.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      btn.textContent = '\u263E'; // moon
+      localStorage.setItem('playdoku_theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      btn.textContent = '\u2600'; // sun
+      localStorage.setItem('playdoku_theme', 'dark');
+    }
+  });
+}
+
 // Start app
 setupLanding();
 setupModals();
 setupHomeButton();
+setupThemeToggle();
