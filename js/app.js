@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=4';
-import { GameState } from './game.js?v=4';
-import { showToast } from './utils.js?v=4';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=4';
-import { SPORTS } from './sports.js?v=4';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=5';
+import { GameState } from './game.js?v=5';
+import { showToast } from './utils.js?v=5';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=5';
+import { SPORTS } from './sports.js?v=5';
 
 let players = [];
 let puzzle = null;
@@ -47,7 +47,7 @@ function renderHeaderContent(cat) {
     return `<img class="header-logo" src="${cat.logo}" alt="${cat.label}"><span class="header-text">${cat.label}</span>`;
   }
   if (cat.flag) {
-    return `<img class="header-flag" src="https://flagcdn.com/w80/${cat.flag}.png" alt="${cat.label}">`;
+    return `<img class="header-flag" src="https://flagcdn.com/w80/${cat.flag}.png" alt="${cat.label}"><span class="header-text">${cat.label}</span>`;
   }
   return `<span class="header-emoji">${cat.emoji}</span><span class="header-text">${cat.label}</span>`;
 }
