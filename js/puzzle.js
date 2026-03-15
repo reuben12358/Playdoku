@@ -56,15 +56,41 @@ function matchesCat(player, cat) {
   }
 }
 
-function cellHasEnoughAnswers(players, rowCat, colCat, minAnswers = 2) {
-  let count = 0;
-  for (const p of players) {
-    if (matchesCat(p, rowCat) && matchesCat(p, colCat)) {
-      count++;
-      if (count >= minAnswers) return true;
+function getValidPlayers(players, rowCat, colCat) {
+  return players.filter(p => matchesCat(p, rowCat) && matchesCat(p, colCat));
+}
+
+function validatePuzzle(players, rows, cols) {
+  // Every cell must have at least 2 valid answers
+  for (const rowCat of rows) {
+    for (const colCat of cols) {
+      if (rowCat.id === colCat.id) return false;
+      if (getValidPlayers(players, rowCat, colCat).length < 2) return false;
     }
   }
-  return false;
+
+  // Ensure 9 unique players can fill the grid (no cell forced to share its only answer)
+  // Use greedy assignment: for each cell, collect valid players, then check
+  // that we can assign at least one unique player per cell
+  const cellPlayers = [];
+  for (let r = 0; r < 3; r++) {
+    for (let c = 0; c < 3; c++) {
+      const valid = getValidPlayers(players, rows[r], cols[c]);
+      if (valid.length === 0) return false;
+      cellPlayers.push(valid.map(p => p.name));
+    }
+  }
+
+  // Greedy unique assignment check (sorted by fewest options first)
+  const indices = [0,1,2,3,4,5,6,7,8].sort((a,b) => cellPlayers[a].length - cellPlayers[b].length);
+  const used = new Set();
+  for (const i of indices) {
+    const available = cellPlayers[i].find(name => !used.has(name));
+    if (!available) return false;
+    used.add(available);
+  }
+
+  return true;
 }
 
 export function generatePuzzle(players, categories, seedOffset = 0) {
@@ -73,7 +99,7 @@ export function generatePuzzle(players, categories, seedOffset = 0) {
 
   const allCats = getAllCategories(categories);
 
-  for (let attempt = 0; attempt < 200; attempt++) {
+  for (let attempt = 0; attempt < 500; attempt++) {
     const shuffled = shuffle(allCats, rng);
 
     const picked = [];
@@ -101,19 +127,7 @@ export function generatePuzzle(players, categories, seedOffset = 0) {
     const rows = picked.slice(0, 3);
     const cols = picked.slice(3, 6);
 
-    let valid = true;
-    for (const rowCat of rows) {
-      for (const colCat of cols) {
-        if (rowCat.id === colCat.id) { valid = false; break; }
-        if (!cellHasEnoughAnswers(players, rowCat, colCat, 1)) {
-          valid = false;
-          break;
-        }
-      }
-      if (!valid) break;
-    }
-
-    if (valid) {
+    if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
   }
