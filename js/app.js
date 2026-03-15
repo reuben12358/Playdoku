@@ -7,6 +7,13 @@ let puzzle = null;
 let game = null;
 let selectedCell = null;
 
+function renderHeaderContent(cat) {
+  if (cat.flag) {
+    return `<img class="header-flag" src="https://flagcdn.com/w80/${cat.flag}.png" alt="${cat.label}">`;
+  }
+  return `<span class="header-emoji">${cat.emoji}</span><span class="header-text">${cat.label}</span>`;
+}
+
 async function init() {
   const res = await fetch('data/players.json');
   players = await res.json();
@@ -50,7 +57,7 @@ function renderGrid() {
   puzzle.cols.forEach(cat => {
     const header = document.createElement('div');
     header.className = 'grid-header col-header';
-    header.innerHTML = `<span class="header-emoji">${cat.emoji}</span><span class="header-text">${cat.label}</span>`;
+    header.innerHTML = renderHeaderContent(cat);
     container.appendChild(header);
   });
 
@@ -59,7 +66,7 @@ function renderGrid() {
     // Row header
     const rowHeader = document.createElement('div');
     rowHeader.className = 'grid-header row-header';
-    rowHeader.innerHTML = `<span class="header-emoji">${rowCat.emoji}</span><span class="header-text">${rowCat.label}</span>`;
+    rowHeader.innerHTML = renderHeaderContent(rowCat);
     container.appendChild(rowHeader);
 
     // Cells
