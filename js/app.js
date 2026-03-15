@@ -104,19 +104,20 @@ function renderGrid() {
       cell.dataset.col = c;
 
       const state = game.getCellState(r, c);
-      if (state) {
-        if (state.correct) {
-          cell.classList.add('correct');
-          cell.innerHTML = `<span class="cell-player">${state.playerName}</span>`;
-        } else {
-          cell.classList.add('incorrect', 'locked');
-          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">\u2717</span>`;
-        }
+      if (state && state.correct) {
+        cell.classList.add('correct');
+        cell.innerHTML = `<span class="cell-player">${state.playerName}</span>`;
       } else if (game.isComplete()) {
         cell.classList.add('locked');
         cell.innerHTML = `<span class="cell-plus">-</span>`;
       } else {
-        cell.innerHTML = `<span class="cell-plus">+</span>`;
+        if (state && !state.correct) {
+          // Show X but keep clickable for retry
+          cell.classList.add('incorrect');
+          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">\u2717</span>`;
+        } else {
+          cell.innerHTML = `<span class="cell-plus">+</span>`;
+        }
         cell.addEventListener('click', () => openSearch(r, c));
       }
 

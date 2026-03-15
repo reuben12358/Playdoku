@@ -118,6 +118,12 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     const rows = picked.slice(0, 3);
     const cols = picked.slice(3, 6);
 
+    // Ensure no duplicate types within rows or within cols
+    const rowTypes = rows.map(c => c.type);
+    const colTypes = cols.map(c => c.type);
+    if (new Set(rowTypes).size !== rowTypes.length) continue;
+    if (new Set(colTypes).size !== colTypes.length) continue;
+
     if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
