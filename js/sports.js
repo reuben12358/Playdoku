@@ -207,8 +207,8 @@ export const SPORTS = {
       ],
       leagues: [],
       positions: [
-        { id: 'batsman', label: 'Batsman', value: 'Batsman', type: 'position', emoji: '\u{1F3AF}' },
-        { id: 'bowler', label: 'Bowler', value: 'Bowler', type: 'position', emoji: '\u{1F4A8}' },
+        { id: 'batsman', label: 'Batsman', value: 'Batsman', type: 'position', emoji: '\u{1F3CF}' },
+        { id: 'bowler', label: 'Bowler', value: 'Bowler', type: 'position', emoji: '\u{1F94E}' },
         { id: 'all_rounder', label: 'All-Rounder', value: 'All-Rounder', type: 'position', emoji: '\u2B50' },
         { id: 'wicketkeeper', label: 'Wicket-Keeper', value: 'Wicket-Keeper', type: 'position', emoji: '\u{1F9E4}' },
       ],

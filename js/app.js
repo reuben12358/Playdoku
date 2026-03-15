@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=13';
-import { GameState } from './game.js?v=13';
-import { showToast } from './utils.js?v=13';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=13';
-import { SPORTS } from './sports.js?v=13';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=14';
+import { GameState } from './game.js?v=14';
+import { showToast } from './utils.js?v=14';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=14';
+import { SPORTS } from './sports.js?v=14';
 
 let players = [];
 let puzzle = null;
