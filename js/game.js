@@ -4,7 +4,6 @@ export class GameState {
     this.sportId = sportId;
     this.storageKey = `playdoku_state_${sportId}`;
     this.statsKey = `playdoku_stats_${sportId}`;
-    this.maxGuesses = 9;
     this.cells = {};
     this.guessesUsed = 0;
 
@@ -41,7 +40,6 @@ export class GameState {
   makeGuess(row, col, playerName, isCorrect) {
     const key = `${row},${col}`;
     if (this.cells[key]) return;
-    if (this.guessesUsed >= this.maxGuesses) return;
 
     this.cells[key] = { correct: isCorrect, playerName };
     this.guessesUsed++;
@@ -56,16 +54,12 @@ export class GameState {
     return this.cells[`${row},${col}`] || null;
   }
 
-  getGuessesRemaining() {
-    return this.maxGuesses - this.guessesUsed;
-  }
-
   getScore() {
     return Object.values(this.cells).filter(c => c.correct).length;
   }
 
   isComplete() {
-    return this.guessesUsed >= this.maxGuesses;
+    return Object.keys(this.cells).length >= 9;
   }
 
   updateStats() {

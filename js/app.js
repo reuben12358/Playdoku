@@ -45,7 +45,7 @@ async function init(sportId) {
 
   renderPuzzleNumber();
   renderGrid();
-  updateGuessesDisplay();
+
 
   if (game.isComplete()) {
     showShareButton();
@@ -193,7 +193,7 @@ function selectPlayer(player) {
 
   closeModal('search-modal');
   renderGrid();
-  updateGuessesDisplay();
+
 
   if (isCorrect) {
     showToast('Correct!');
@@ -226,10 +226,6 @@ function matchesCategory(player, category) {
   }
 }
 
-function updateGuessesDisplay() {
-  const remaining = game.getGuessesRemaining();
-  document.getElementById('guesses-remaining').textContent = `${remaining} guess${remaining !== 1 ? 'es' : ''} remaining`;
-}
 
 function showShareButton() {
   document.getElementById('share-btn').style.display = 'inline-block';

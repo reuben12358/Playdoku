@@ -1,8 +1,8 @@
-# ⚽ Playdoku
+# ⚽🏀 Playdoku
 
-**The daily football trivia grid game.**
+**The daily sports trivia grid game.**
 
-Guess the soccer player that fits both the row and column categories. A new puzzle every day!
+Guess the player that fits both the row and column categories. A new puzzle every day — for **football** and **basketball**!
 
 🔗 **[Play Now → reuben12358.github.io/Playdoku](https://reuben12358.github.io/Playdoku/)**
 
@@ -20,12 +20,17 @@ Guess the soccer player that fits both the row and column categories. A new puzz
 | **🔵 Chelsea** | ? | ? | ? |
 | **🇫🇷 France** | ? | ? | ? |
 
-- **3×3 grid** — each row and column has a football category
-- **9 guesses** — click a cell, search for a player, and lock in your answer
+- **3x3 grid** — each row and column has a category
+- **Click a cell**, search for a player, and lock in your answer
 - The player must match **both** the row and column criteria
+- Each cell can only be attempted once
 - **New puzzle daily** — same puzzle for everyone, powered by a date-seeded algorithm
 
-## 🏟️ Categories
+## 🏟️ Two Sports, One Game
+
+Switch between **Football** and **Basketball** with the toggle in the header. Each sport has its own daily puzzle, stats, and theme.
+
+### ⚽ Football Categories
 
 | Type | Examples |
 |------|----------|
@@ -35,17 +40,29 @@ Guess the soccer player that fits both the row and column categories. A new puzz
 | **Positions** | Goalkeeper, Defender, Midfielder, Forward |
 | **Awards** | Ballon d'Or, World Cup Winner, Champions League Winner |
 
+### 🏀 Basketball Categories
+
+| Type | Examples |
+|------|----------|
+| **Teams** | Lakers, Celtics, Bulls, Warriors, Heat, Spurs, Nets, 76ers, Mavericks, Nuggets, and more |
+| **Countries** | USA, Canada, France, Germany, Spain, Serbia, Greece, Australia, Cameroon, Slovenia |
+| **Conferences** | Eastern Conference, Western Conference |
+| **Positions** | Point Guard, Shooting Guard, Small Forward, Power Forward, Center |
+| **Awards** | MVP, NBA Champion, Finals MVP, DPOY |
+
 ## ✨ Features
 
 - 🔄 **Daily puzzles** — deterministic generation means everyone gets the same challenge
-- 🔍 **Smart search** — autocomplete from 150+ iconic footballers
+- 🏀⚽ **Two sports** — switch between football and basketball with one tap
+- 🔍 **Hybrid search** — local database + live results from TheSportsDB API
 - 💾 **Progress saved** — come back anytime, your game state persists
-- 📊 **Stats tracking** — games played, correct answers, streaks
+- 📊 **Stats tracking** — games played, correct answers, streaks (per sport)
+- 🎨 **Dynamic themes** — green for football, orange for basketball
 - 📱 **Mobile-friendly** — plays great on any device
 - 📋 **Shareable results** — share your grid with friends
 
 ```
-Playdoku #1 - 7/9
+Playdoku Football #1 - 7/9
 🟩🟩🟩
 🟩⬜🟩
 🟩🟥⬜
@@ -57,15 +74,18 @@ Pure vanilla web — no frameworks, no build step, no dependencies.
 
 ```
 Playdoku/
-├── index.html          # Single-page app
-├── css/styles.css      # Responsive styles
+├── index.html            # Single-page app
+├── css/styles.css        # Responsive styles with dynamic theming
 ├── js/
-│   ├── app.js          # Main game logic
-│   ├── puzzle.js       # Date-seeded puzzle generation
-│   ├── game.js         # State management & persistence
-│   └── utils.js        # Toast notifications
+│   ├── app.js            # Main game logic & sport switching
+│   ├── sports.js         # Sport configs (categories, themes)
+│   ├── puzzle.js         # Date-seeded puzzle generation
+│   ├── game.js           # State management & persistence
+│   ├── api.js            # TheSportsDB live search
+│   └── utils.js          # Toast notifications
 └── data/
-    └── players.json    # Player database
+    ├── players.json      # Football player database (150+)
+    └── nba_players.json  # Basketball player database (120+)
 ```
 
 ## 🚀 Run Locally
@@ -89,5 +109,5 @@ MIT
 ---
 
 <p align="center">
-  Made with ⚽ by <a href="https://github.com/reuben12358">Reuben D'cunha</a>
+  Made with ⚽🏀 by <a href="https://github.com/reuben12358">Reuben D'cunha</a>
 </p>
