@@ -1,6 +1,7 @@
 import { generatePuzzle, getPuzzleNumber } from './puzzle.js';
 import { GameState } from './game.js';
 import { showToast } from './utils.js';
+import { searchPlayersAPI } from './api.js';
 
 let players = [];
 let puzzle = null;
@@ -121,27 +122,53 @@ function setupSearch() {
   const input = document.getElementById('search-input');
   const resultsList = document.getElementById('search-results');
   let debounceTimer;
+  let apiTimer;
 
   input.addEventListener('input', () => {
     clearTimeout(debounceTimer);
+    clearTimeout(apiTimer);
+
     debounceTimer = setTimeout(() => {
       const query = input.value.trim().toLowerCase();
       resultsList.innerHTML = '';
 
       if (query.length < 2) return;
 
-      const matches = players
+      // Show local results immediately
+      const localMatches = players
         .filter(p => p.name.toLowerCase().includes(query))
-        .slice(0, 15);
+        .slice(0, 10);
 
-      matches.forEach(player => {
-        const li = document.createElement('li');
-        li.innerHTML = `${player.name}<span class="player-country">${player.country}</span>`;
-        li.addEventListener('click', () => selectPlayer(player));
-        resultsList.appendChild(li);
+      const shownNames = new Set(localMatches.map(p => p.name.toLowerCase()));
+
+      localMatches.forEach(player => {
+        resultsList.appendChild(createPlayerItem(player, false));
       });
+
+      // Fetch API results after a longer delay (to respect rate limits)
+      if (query.length >= 3) {
+        apiTimer = setTimeout(async () => {
+          const apiResults = await searchPlayersAPI(query);
+          // Add API results that aren't already shown from local DB
+          const newResults = apiResults.filter(p => !shownNames.has(p.name.toLowerCase()));
+
+          if (newResults.length > 0 && input.value.trim().toLowerCase() === query) {
+            newResults.slice(0, 8).forEach(player => {
+              resultsList.appendChild(createPlayerItem(player, true));
+            });
+          }
+        }, 300);
+      }
     }, 150);
   });
+}
+
+function createPlayerItem(player, isFromAPI) {
+  const li = document.createElement('li');
+  const badge = isFromAPI ? '<span class="api-badge">LIVE</span>' : '';
+  li.innerHTML = `${player.name}${badge}<span class="player-country">${player.country}</span>`;
+  li.addEventListener('click', () => selectPlayer(player));
+  return li;
 }
 
 function selectPlayer(player) {
@@ -178,15 +205,15 @@ function selectPlayer(player) {
 function matchesCategory(player, category) {
   switch (category.type) {
     case 'club':
-      return player.clubs.some(c => c.toLowerCase() === category.value.toLowerCase());
+      return player.clubs && player.clubs.some(c => c.toLowerCase() === category.value.toLowerCase());
     case 'country':
-      return player.country.toLowerCase() === category.value.toLowerCase();
+      return player.country && player.country.toLowerCase() === category.value.toLowerCase();
     case 'league':
-      return player.leagues.some(l => l.toLowerCase() === category.value.toLowerCase());
+      return player.leagues && player.leagues.some(l => l.toLowerCase() === category.value.toLowerCase());
     case 'position':
-      return player.positions.some(p => p.toLowerCase() === category.value.toLowerCase());
+      return player.positions && player.positions.some(p => p.toLowerCase() === category.value.toLowerCase());
     case 'award':
-      return player.awards.some(a => a.toLowerCase() === category.value.toLowerCase());
+      return player.awards && player.awards.some(a => a.toLowerCase() === category.value.toLowerCase());
     default:
       return false;
   }

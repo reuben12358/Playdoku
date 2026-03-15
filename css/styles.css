@@ -356,6 +356,18 @@ main {
   margin-left: 0.5rem;
 }
 
+.search-results li .api-badge {
+  font-size: 0.55rem;
+  background: var(--primary);
+  color: white;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
 /* Stats */
 .stats-grid {
   display: grid;
