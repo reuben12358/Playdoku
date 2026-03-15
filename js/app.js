@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=7';
-import { GameState } from './game.js?v=7';
-import { showToast } from './utils.js?v=7';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=7';
-import { SPORTS } from './sports.js?v=7';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=8';
+import { GameState } from './game.js?v=8';
+import { showToast } from './utils.js?v=8';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=8';
+import { SPORTS } from './sports.js?v=8';
 
 let players = [];
 let puzzle = null;
@@ -41,6 +41,17 @@ function enforceCountryRule(puzzle) {
 }
 
 const fahhSound = new Audio('https://www.myinstants.com/media/sounds/fahhh_KcgAXfs.mp3');
+
+function getTooltip(cat) {
+  switch (cat.type) {
+    case 'club': return `Played for ${cat.label}`;
+    case 'country': return `Nationality: ${cat.label}`;
+    case 'league': return `Played in ${cat.label}`;
+    case 'position': return `Position: ${cat.label}`;
+    case 'award': return `${cat.label} winner`;
+    default: return cat.label;
+  }
+}
 
 function renderHeaderContent(cat) {
   if (cat.logo) {
@@ -120,6 +131,7 @@ function renderGrid() {
   puzzle.cols.forEach(cat => {
     const header = document.createElement('div');
     header.className = 'grid-header col-header';
+    header.title = getTooltip(cat);
     header.innerHTML = renderHeaderContent(cat);
     container.appendChild(header);
   });
@@ -127,6 +139,7 @@ function renderGrid() {
   puzzle.rows.forEach((rowCat, r) => {
     const rowHeader = document.createElement('div');
     rowHeader.className = 'grid-header row-header';
+    rowHeader.title = getTooltip(rowCat);
     rowHeader.innerHTML = renderHeaderContent(rowCat);
     container.appendChild(rowHeader);
 
@@ -486,22 +499,21 @@ function showRules(sportId, force = false) {
 
   const catDescriptions = {
     football: [
-      ['Team Logos', 'The player must have played for that club at any point in their career'],
-      ['Country Flags', 'The player must be from that country (nationality)'],
-      ['League Flags', 'The player must have played in that league (e.g. Premier League, La Liga)'],
-      ['Positions', 'The player must have played in that position (GK, Defender, Midfielder, Forward)'],
-      ['Awards', "Ballon d'Or winner, World Cup winner, or Champions League (UCL) winner"],
+      ['Team Logos', 'Played for that club at any point in their career (past or present)'],
+      ['Country Flags', 'The player\'s nationality (e.g. France = a French player)'],
+      ['Leagues', 'Played in that league at any point (e.g. Premier League = played in the PL)'],
+      ['Positions', 'Played in that position (Goalkeeper, Defender, Midfielder, or Forward)'],
+      ['Awards', "Won that award (Ballon d'Or, World Cup, or Champions League)"],
     ],
     basketball: [
-      ['Team Logos', 'The player must have played for that NBA team at any point'],
-      ['Country Flags', 'The player must be from that country'],
-      ['Positions', 'Point Guard, Shooting Guard, Small Forward, Power Forward, or Center'],
-      ['Awards', 'MVP, NBA Champion, Finals MVP, DPOY, or All-Star selection'],
+      ['Team Logos', 'Played for that NBA team at any point (past or present)'],
+      ['Positions', 'Played that position (Point Guard, Shooting Guard, Small Forward, Power Forward, or Center)'],
+      ['Awards', 'Won or earned that award (MVP, NBA Champion, Finals MVP, DPOY, or All-Star)'],
     ],
     nfl: [
-      ['Team Logos', 'The player must have played for that NFL team at any point'],
-      ['Positions', 'QB, RB, WR, TE, Defensive End, Linebacker, Cornerback, Safety, etc.'],
-      ['Awards', 'MVP, Super Bowl Winner, Super Bowl MVP, DPOY, or Pro Bowl selection'],
+      ['Team Logos', 'Played for that NFL team at any point (past or present)'],
+      ['Positions', 'Played that position (QB, RB, WR, TE, DE, LB, CB, Safety, OL)'],
+      ['Awards', 'Won or earned that award (MVP, Super Bowl Champion, Super Bowl MVP, DPOY, or Pro Bowl)'],
     ],
   };
 
