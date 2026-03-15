@@ -297,11 +297,17 @@ function showGameOver() {
   const grid = document.getElementById('gameover-grid');
 
   if (score === 9) {
-    title.textContent = 'Perfect!';
-    message.textContent = 'You got all 9 correct!';
+    title.textContent = 'Perfect! 9/9';
+    message.textContent = 'Incredible! You nailed every single one!';
+  } else if (score >= 7) {
+    title.textContent = `Great Job! ${score}/9`;
+    message.textContent = 'So close to perfection! Want to try another?';
+  } else if (score >= 4) {
+    title.textContent = `Not Bad! ${score}/9`;
+    message.textContent = 'Solid effort! Think you can do better?';
   } else {
-    title.textContent = 'Game Over!';
-    message.textContent = `You got ${score} out of 9 correct.`;
+    title.textContent = `${score}/9`;
+    message.textContent = 'Better luck next time! Give it another shot?';
   }
 
   grid.innerHTML = '';
@@ -415,6 +421,10 @@ function setupModals() {
   document.getElementById('share-btn').addEventListener('click', shareResults);
   document.getElementById('gameover-share-btn').addEventListener('click', shareResults);
   document.getElementById('refresh-btn').addEventListener('click', refreshPuzzle);
+  document.getElementById('gameover-play-again').addEventListener('click', () => {
+    closeModal('gameover-modal');
+    refreshPuzzle();
+  });
 
 
   setupSearch();

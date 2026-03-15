@@ -47,11 +47,11 @@ function countMatches(players, cat) {
 
 function matchesCat(player, cat) {
   switch (cat.type) {
-    case 'club': return player.clubs.some(c => c.toLowerCase() === cat.value.toLowerCase());
-    case 'country': return player.country.toLowerCase() === cat.value.toLowerCase();
-    case 'league': return player.leagues.some(l => l.toLowerCase() === cat.value.toLowerCase());
-    case 'position': return player.positions.some(p => p.toLowerCase() === cat.value.toLowerCase());
-    case 'award': return player.awards.some(a => a.toLowerCase() === cat.value.toLowerCase());
+    case 'club': return player.clubs && player.clubs.some(c => c.toLowerCase() === cat.value.toLowerCase());
+    case 'country': return player.country && player.country.toLowerCase() === cat.value.toLowerCase();
+    case 'league': return player.leagues && player.leagues.some(l => l.toLowerCase() === cat.value.toLowerCase());
+    case 'position': return player.positions && player.positions.some(p => p.toLowerCase() === cat.value.toLowerCase());
+    case 'award': return player.awards && player.awards.some(a => a.toLowerCase() === cat.value.toLowerCase());
     default: return false;
   }
 }
@@ -60,7 +60,33 @@ function getValidPlayers(players, rowCat, colCat) {
   return players.filter(p => matchesCat(p, rowCat) && matchesCat(p, colCat));
 }
 
+// Hard check: no two categories of the same "exclusive" type across rows and cols
+function isValidLayout(rows, cols) {
+  const allCats = [...rows, ...cols];
+
+  // No duplicate types within rows or within cols
+  const rowTypes = rows.map(c => c.type);
+  const colTypes = cols.map(c => c.type);
+  if (new Set(rowTypes).size !== rowTypes.length) return false;
+  if (new Set(colTypes).size !== colTypes.length) return false;
+
+  // Country must NOT appear in both rows and cols (player has one nationality)
+  if (rows.some(c => c.type === 'country') && cols.some(c => c.type === 'country')) return false;
+
+  // League must NOT appear in both rows and cols (player in one league/conf at a time)
+  if (rows.some(c => c.type === 'league') && cols.some(c => c.type === 'league')) return false;
+
+  // No two identical categories
+  const ids = allCats.map(c => c.id);
+  if (new Set(ids).size !== ids.length) return false;
+
+  return true;
+}
+
 function validatePuzzle(players, rows, cols) {
+  // Hard layout check first
+  if (!isValidLayout(rows, cols)) return false;
+
   // Every cell must have at least 1 valid answer
   const cellPlayers = [];
   for (let r = 0; r < 3; r++) {
@@ -99,9 +125,10 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     for (const cat of shuffled) {
       const tc = typeCounts[cat.type] || 0;
 
+      // Hard limits: max 1 country, max 1 league (prevents cross-axis conflicts)
+      if (cat.type === 'country' && tc >= 1) continue;
+      if (cat.type === 'league' && tc >= 1) continue;
       if (cat.type === 'club' && tc >= 4) continue;
-      if (cat.type === 'country' && tc >= 2) continue;
-      if (cat.type === 'league' && tc >= 2) continue;
       if (cat.type === 'position' && tc >= 2) continue;
       if (cat.type === 'award' && tc >= 2) continue;
 
@@ -118,46 +145,29 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     const rows = picked.slice(0, 3);
     const cols = picked.slice(3, 6);
 
-    // Ensure no duplicate types within rows or within cols
-    const rowTypes = rows.map(c => c.type);
-    const colTypes = cols.map(c => c.type);
-    if (new Set(rowTypes).size !== rowTypes.length) continue;
-    if (new Set(colTypes).size !== colTypes.length) continue;
-
-    // Country can only appear in rows OR cols, not both
-    // (a player has exactly one nationality, so a row-country + col-country cell is impossible)
-    const rowHasCountry = rows.some(c => c.type === 'country');
-    const colHasCountry = cols.some(c => c.type === 'country');
-    if (rowHasCountry && colHasCountry) continue;
-
-    // League/conference can only appear in rows OR cols, not both
-    // (a player is in exactly one league/conference at a time)
-    const rowHasLeague = rows.some(c => c.type === 'league');
-    const colHasLeague = cols.some(c => c.type === 'league');
-    if (rowHasLeague && colHasLeague) continue;
-
     if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
   }
 
-  // Fallback: use only clubs and positions (safe combo that always works)
+  // Fallback: use only clubs and positions (guaranteed no conflicts)
   const fallbackCats = getAllCategories(categories)
     .filter(c => (c.type === 'club' || c.type === 'position') && countMatches(players, c) >= 2);
   const fallbackShuffled = shuffle(fallbackCats, rng);
   if (fallbackShuffled.length >= 6) {
-    return {
-      rows: [fallbackShuffled[0], fallbackShuffled[1], fallbackShuffled[2]],
-      cols: [fallbackShuffled[3], fallbackShuffled[4], fallbackShuffled[5]],
-      seed,
-    };
+    const rows = [fallbackShuffled[0], fallbackShuffled[1], fallbackShuffled[2]];
+    const cols = [fallbackShuffled[3], fallbackShuffled[4], fallbackShuffled[5]];
+    if (isValidLayout(rows, cols)) {
+      return { rows, cols, seed };
+    }
   }
 
-  // Last resort
-  const allFallback = getAllCategories(categories).filter(c => countMatches(players, c) >= 1);
+  // Last resort: clubs only
+  const clubsOnly = (categories.clubs || []).filter(c => countMatches(players, c) >= 2);
+  const clubsShuffled = shuffle(clubsOnly, rng);
   return {
-    rows: [allFallback[0], allFallback[1], allFallback[2]],
-    cols: [allFallback[3], allFallback[4], allFallback[5]],
+    rows: [clubsShuffled[0], clubsShuffled[1], clubsShuffled[2]],
+    cols: [clubsShuffled[3], clubsShuffled[4], clubsShuffled[5]],
     seed,
   };
 }
