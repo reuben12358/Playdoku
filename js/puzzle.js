@@ -124,12 +124,30 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     if (new Set(rowTypes).size !== rowTypes.length) continue;
     if (new Set(colTypes).size !== colTypes.length) continue;
 
+    // Country can only appear in rows OR cols, not both
+    // (a player has exactly one nationality, so a row-country + col-country cell is impossible)
+    const rowHasCountry = rows.some(c => c.type === 'country');
+    const colHasCountry = cols.some(c => c.type === 'country');
+    if (rowHasCountry && colHasCountry) continue;
+
     if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
   }
 
-  // Fallback: pick first 6 available categories from all types
+  // Fallback: use only clubs and positions (safe combo that always works)
+  const fallbackCats = getAllCategories(categories)
+    .filter(c => (c.type === 'club' || c.type === 'position') && countMatches(players, c) >= 2);
+  const fallbackShuffled = shuffle(fallbackCats, rng);
+  if (fallbackShuffled.length >= 6) {
+    return {
+      rows: [fallbackShuffled[0], fallbackShuffled[1], fallbackShuffled[2]],
+      cols: [fallbackShuffled[3], fallbackShuffled[4], fallbackShuffled[5]],
+      seed,
+    };
+  }
+
+  // Last resort
   const allFallback = getAllCategories(categories).filter(c => countMatches(players, c) >= 1);
   return {
     rows: [allFallback[0], allFallback[1], allFallback[2]],
