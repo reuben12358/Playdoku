@@ -544,6 +544,28 @@ main {
   line-height: 1.4;
 }
 
+.info-modal-content {
+  max-width: 440px;
+}
+
+.rules-categories {
+  margin: 0;
+}
+
+.rules-categories dt {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--primary);
+  margin-top: 0.5rem;
+}
+
+.rules-categories dd {
+  margin-left: 0;
+  font-size: 0.8rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
 /* Search */
 .search-criteria {
   font-size: 0.85rem;

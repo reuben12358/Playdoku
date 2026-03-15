@@ -410,7 +410,7 @@ function setupModals() {
   });
 
   document.getElementById('info-btn').addEventListener('click', () => {
-    document.getElementById('info-modal').style.display = 'flex';
+    if (currentSport) showRules(currentSport.id, true);
   });
 
   document.getElementById('stats-btn').addEventListener('click', () => {
@@ -439,6 +439,59 @@ function setupModals() {
 
 function closeModal(id) {
   document.getElementById(id).style.display = 'none';
+}
+
+function showRules(sportId, force = false) {
+  const seenKey = `playdoku_rules_seen_${sportId}`;
+  if (!force && localStorage.getItem(seenKey)) return;
+
+  const sport = SPORTS[sportId];
+  if (!sport) return;
+
+  const title = document.getElementById('info-title');
+  title.textContent = `How to Play — ${sport.label}`;
+
+  const body = document.getElementById('info-body');
+
+  const catDescriptions = {
+    football: [
+      ['Team Logos', 'The player must have played for that club at any point in their career'],
+      ['Country Flags', 'The player must be from that country (nationality)'],
+      ['League Flags', 'The player must have played in that league (e.g. Premier League, La Liga)'],
+      ['Positions', 'The player must have played in that position (GK, Defender, Midfielder, Forward)'],
+      ['Awards', "Ballon d'Or winner, World Cup winner, or Champions League (UCL) winner"],
+    ],
+    basketball: [
+      ['Team Logos', 'The player must have played for that NBA team at any point'],
+      ['Country Flags', 'The player must be from that country'],
+      ['Positions', 'Point Guard, Shooting Guard, Small Forward, Power Forward, or Center'],
+      ['Awards', 'MVP, NBA Champion, Finals MVP, DPOY, or All-Star selection'],
+    ],
+    nfl: [
+      ['Team Logos', 'The player must have played for that NFL team at any point'],
+      ['Positions', 'QB, RB, WR, TE, Defensive End, Linebacker, Cornerback, Safety, etc.'],
+      ['Awards', 'MVP, Super Bowl Winner, Super Bowl MVP, DPOY, or Pro Bowl selection'],
+    ],
+  };
+
+  const cats = catDescriptions[sportId] || catDescriptions.football;
+
+  body.innerHTML = `
+    <p>Fill in the 3x3 grid with <strong>${sport.label}</strong> players who match <strong>both</strong> the row and column categories.</p>
+    <ul>
+      <li>Click a <strong>+</strong> cell to search for a player</li>
+      <li>The player must match the category for both the row <em>and</em> column</li>
+      <li>Wrong guesses show an <strong style="color:var(--incorrect)">X</strong> but you can retry</li>
+      <li>A new puzzle appears every day!</li>
+    </ul>
+    <h3 style="margin-top:1rem;margin-bottom:0.5rem;font-size:0.95rem;">Categories</h3>
+    <dl class="rules-categories">
+      ${cats.map(([name, desc]) => `<dt>${name}</dt><dd>${desc}</dd>`).join('')}
+    </dl>
+  `;
+
+  document.getElementById('info-modal').style.display = 'flex';
+  localStorage.setItem(seenKey, '1');
 }
 
 function updateStatsDisplay() {
@@ -470,7 +523,7 @@ function setupLanding() {
           b.classList.toggle('active', b.dataset.sport === sportId);
         });
 
-        init(sportId);
+        init(sportId).then(() => showRules(sportId));
       }, 400);
     });
   });

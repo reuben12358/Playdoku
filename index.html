@@ -93,20 +93,12 @@
   <!-- Info Modal -->
   <div id="info-modal" class="modal" style="display:none;">
     <div class="modal-overlay"></div>
-    <div class="modal-content">
+    <div class="modal-content info-modal-content">
       <div class="modal-header">
-        <h2>How to Play</h2>
+        <h2 id="info-title">How to Play</h2>
         <button class="modal-close" aria-label="Close">&times;</button>
       </div>
-      <div class="modal-body">
-        <p>Fill in the 3x3 grid with players who match <strong>both</strong> the row and column categories.</p>
-        <ul>
-          <li>Click a cell to search for a player</li>
-          <li>The player must match the category for both the row and column</li>
-          <li>Incorrect guesses can be retried</li>
-          <li>A new puzzle appears every day!</li>
-        </ul>
-      </div>
+      <div id="info-body" class="modal-body"></div>
     </div>
   </div>
 
