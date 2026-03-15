@@ -119,5 +119,13 @@
   {"name":"Breece Hall","clubs":["New York Jets"],"country":"USA","positions":["Running Back"],"leagues":["AFC"],"awards":[]},
   {"name":"Garrett Wilson","clubs":["New York Jets"],"country":"USA","positions":["Wide Receiver"],"leagues":["AFC"],"awards":[]},
   {"name":"Terry McLaurin","clubs":["Washington Commanders"],"country":"USA","positions":["Wide Receiver"],"leagues":["NFC"],"awards":[]},
-  {"name":"Brandon Aiyuk","clubs":["San Francisco 49ers"],"country":"USA","positions":["Wide Receiver"],"leagues":["NFC"],"awards":[]}
+  {"name":"Brandon Aiyuk","clubs":["San Francisco 49ers"],"country":"USA","positions":["Wide Receiver"],"leagues":["NFC"],"awards":[]},
+  {"name":"Fred Taylor","clubs":["Jacksonville Jaguars","New England Patriots"],"country":"USA","positions":["Running Back"],"leagues":["AFC"],"awards":[]},
+  {"name":"Maurice Jones-Drew","clubs":["Jacksonville Jaguars","Oakland Raiders"],"country":"USA","positions":["Running Back"],"leagues":["AFC"],"awards":[]},
+  {"name":"Mark Brunell","clubs":["Jacksonville Jaguars","Washington Redskins","New Orleans Saints","New York Jets"],"country":"USA","positions":["Quarterback"],"leagues":["AFC","NFC"],"awards":[]},
+  {"name":"Jimmy Smith","clubs":["Jacksonville Jaguars"],"country":"USA","positions":["Wide Receiver"],"leagues":["AFC"],"awards":[]},
+  {"name":"Marques Colston","clubs":["New Orleans Saints"],"country":"USA","positions":["Wide Receiver"],"leagues":["NFC"],"awards":["Super Bowl Champion"]},
+  {"name":"Rickey Jackson","clubs":["New Orleans Saints","San Francisco 49ers"],"country":"USA","positions":["Linebacker"],"leagues":["NFC"],"awards":["Super Bowl Champion"]},
+  {"name":"Cam Jordan","clubs":["New Orleans Saints"],"country":"USA","positions":["Defensive End"],"leagues":["NFC"],"awards":[]},
+  {"name":"Michael Thomas","clubs":["New Orleans Saints"],"country":"USA","positions":["Wide Receiver"],"leagues":["NFC"],"awards":[]}
 ]

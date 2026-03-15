@@ -61,27 +61,18 @@ function getValidPlayers(players, rowCat, colCat) {
 }
 
 function validatePuzzle(players, rows, cols) {
-  // Every cell must have at least 2 valid answers
-  for (const rowCat of rows) {
-    for (const colCat of cols) {
-      if (rowCat.id === colCat.id) return false;
-      if (getValidPlayers(players, rowCat, colCat).length < 2) return false;
-    }
-  }
-
-  // Ensure 9 unique players can fill the grid (no cell forced to share its only answer)
-  // Use greedy assignment: for each cell, collect valid players, then check
-  // that we can assign at least one unique player per cell
+  // Every cell must have at least 1 valid answer
   const cellPlayers = [];
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
+      if (rows[r].id === cols[c].id) return false;
       const valid = getValidPlayers(players, rows[r], cols[c]);
       if (valid.length === 0) return false;
       cellPlayers.push(valid.map(p => p.name));
     }
   }
 
-  // Greedy unique assignment check (sorted by fewest options first)
+  // Ensure 9 unique players can fill the grid
   const indices = [0,1,2,3,4,5,6,7,8].sort((a,b) => cellPlayers[a].length - cellPlayers[b].length);
   const used = new Set();
   for (const i of indices) {
@@ -114,7 +105,7 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
       if (cat.type === 'position' && tc >= 2) continue;
       if (cat.type === 'award' && tc >= 2) continue;
 
-      if (countMatches(players, cat) < 3) continue;
+      if (countMatches(players, cat) < 2) continue;
 
       picked.push(cat);
       typeCounts[cat.type] = tc + 1;
@@ -132,10 +123,11 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     }
   }
 
-  // Fallback
+  // Fallback: pick first 6 available categories from all types
+  const allFallback = getAllCategories(categories).filter(c => countMatches(players, c) >= 1);
   return {
-    rows: [categories.clubs[0], categories.clubs[1], categories.clubs[2]],
-    cols: [categories.countries[0], categories.countries[1], categories.countries[2]],
+    rows: [allFallback[0], allFallback[1], allFallback[2]],
+    cols: [allFallback[3], allFallback[4], allFallback[5]],
     seed,
   };
 }
