@@ -39,11 +39,11 @@ export const SPORTS = {
         { id: 'netherlands', label: 'Netherlands', value: 'Netherlands', type: 'country', flag: 'nl' },
       ],
       leagues: [
-        { id: 'premier_league', label: 'Premier League', value: 'Premier League', type: 'league', flag: 'gb-eng' },
-        { id: 'la_liga', label: 'La Liga', value: 'La Liga', type: 'league', flag: 'es' },
-        { id: 'serie_a', label: 'Serie A', value: 'Serie A', type: 'league', flag: 'it' },
-        { id: 'bundesliga', label: 'Bundesliga', value: 'Bundesliga', type: 'league', flag: 'de' },
-        { id: 'ligue_1', label: 'Ligue 1', value: 'Ligue 1', type: 'league', flag: 'fr' },
+        { id: 'premier_league', label: 'Premier League', value: 'Premier League', type: 'league', emoji: '\u{1F3C6}' },
+        { id: 'la_liga', label: 'La Liga', value: 'La Liga', type: 'league', emoji: '\u{1F3C6}' },
+        { id: 'serie_a', label: 'Serie A', value: 'Serie A', type: 'league', emoji: '\u{1F3C6}' },
+        { id: 'bundesliga', label: 'Bundesliga', value: 'Bundesliga', type: 'league', emoji: '\u{1F3C6}' },
+        { id: 'ligue_1', label: 'Ligue 1', value: 'Ligue 1', type: 'league', emoji: '\u{1F3C6}' },
       ],
       positions: [
         { id: 'goalkeeper', label: 'Goalkeeper', value: 'Goalkeeper', type: 'position', emoji: '\u{1F9E4}' },
