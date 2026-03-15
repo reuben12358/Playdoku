@@ -93,8 +93,8 @@ function validatePuzzle(players, rows, cols) {
   return true;
 }
 
-export function generatePuzzle(players, categories, seedOffset = 0) {
-  const seed = getDateSeed() * 10 + seedOffset;
+export function generatePuzzle(players, categories, seedOffset = 0, variation = 0) {
+  const seed = getDateSeed() * 100 + seedOffset * 10 + variation;
   const rng = mulberry32(seed);
 
   const allCats = getAllCategories(categories);

@@ -9,6 +9,7 @@ let puzzle = null;
 let game = null;
 let selectedCell = null;
 let currentSport = null;
+let currentVariation = 0;
 
 function renderHeaderContent(cat) {
   if (cat.flag) {
@@ -40,16 +41,19 @@ async function init(sportId) {
     return true;
   });
 
-  puzzle = generatePuzzle(players, sport.categories, sport.seedOffset);
+  // Load variation from storage or use 0
+  const savedVar = localStorage.getItem(`playdoku_variation_${sportId}`);
+  currentVariation = savedVar ? parseInt(savedVar, 10) : 0;
+
+  puzzle = generatePuzzle(players, sport.categories, sport.seedOffset, currentVariation);
   game = new GameState(puzzle, sport.id);
 
   renderPuzzleNumber();
   renderGrid();
 
-
-  if (game.isComplete()) {
-    showShareButton();
-  }
+  // Show/hide share button
+  const shareBtn = document.getElementById('share-btn');
+  shareBtn.style.display = game.isComplete() ? 'inline-block' : 'none';
 
   // Save sport preference
   localStorage.setItem('playdoku_sport', sportId);
@@ -313,6 +317,20 @@ function setupSportToggle() {
   });
 }
 
+function refreshPuzzle() {
+  if (!currentSport) return;
+  currentVariation++;
+  localStorage.setItem(`playdoku_variation_${currentSport.id}`, currentVariation);
+  // Clear game state for current sport
+  localStorage.removeItem(`playdoku_state_${currentSport.id}`);
+  puzzle = generatePuzzle(players, currentSport.categories, currentSport.seedOffset, currentVariation);
+  game = new GameState(puzzle, currentSport.id);
+  renderPuzzleNumber();
+  renderGrid();
+  document.getElementById('share-btn').style.display = 'none';
+  showToast('New puzzle!');
+}
+
 function setupModals() {
   document.querySelectorAll('.modal-overlay, .modal-close').forEach(el => {
     el.addEventListener('click', (e) => {
@@ -332,6 +350,7 @@ function setupModals() {
 
   document.getElementById('share-btn').addEventListener('click', shareResults);
   document.getElementById('gameover-share-btn').addEventListener('click', shareResults);
+  document.getElementById('refresh-btn').addEventListener('click', refreshPuzzle);
 
   setupSearch();
   setupSportToggle();
