@@ -438,11 +438,46 @@ function updateStatsDisplay() {
   document.getElementById('stat-best').textContent = stats.bestStreak;
 }
 
+// Landing page
+function setupLanding() {
+  const landing = document.getElementById('landing');
+  const gameScreen = document.getElementById('game-screen');
+
+  document.querySelectorAll('.landing-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const sportId = card.dataset.sport;
+
+      // Animate landing out
+      landing.classList.add('exit');
+
+      setTimeout(() => {
+        landing.style.display = 'none';
+        gameScreen.classList.remove('hidden');
+
+        // Set active sport button
+        document.querySelectorAll('.sport-btn').forEach(b => {
+          b.classList.toggle('active', b.dataset.sport === sportId);
+        });
+
+        init(sportId);
+      }, 400);
+    });
+  });
+}
+
+// Home button — go back to landing
+function setupHomeButton() {
+  document.getElementById('home-btn').addEventListener('click', () => {
+    const landing = document.getElementById('landing');
+    const gameScreen = document.getElementById('game-screen');
+
+    gameScreen.classList.add('hidden');
+    landing.style.display = '';
+    landing.classList.remove('exit');
+  });
+}
+
 // Start app
-const savedSport = localStorage.getItem('playdoku_sport') || 'football';
-// Set initial active button
-document.querySelectorAll('.sport-btn').forEach(b => {
-  b.classList.toggle('active', b.dataset.sport === savedSport);
-});
+setupLanding();
 setupModals();
-init(savedSport);
+setupHomeButton();

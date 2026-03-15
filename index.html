@@ -3,44 +3,79 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Playdoku - Daily Football Trivia Grid</title>
-  <meta name="description" content="Playdoku - A daily football trivia grid game. Guess the soccer player that fits both the row and column categories!">
-  <meta property="og:title" content="Playdoku - Daily Football Trivia Grid">
-  <meta property="og:description" content="Can you guess the footballer for each cell? A new puzzle every day!">
+  <title>Playdoku - Daily Sports Trivia Grid</title>
+  <meta name="description" content="Playdoku - A daily sports trivia grid game. Guess the player that fits both the row and column categories!">
+  <meta property="og:title" content="Playdoku - Daily Sports Trivia Grid">
+  <meta property="og:description" content="Can you guess the player for each cell? A new puzzle every day!">
   <meta property="og:type" content="website">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9917;</text></svg>">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <button id="info-btn" class="icon-btn" aria-label="How to play">?</button>
-    </div>
-    <div class="header-center">
-      <h1>Playdoku</h1>
-      <div class="sport-toggle">
-        <button class="sport-btn active" data-sport="football" aria-label="Football">&#9917;</button>
-        <button class="sport-btn" data-sport="basketball" aria-label="Basketball">&#127936;</button>
-        <button class="sport-btn" data-sport="nfl" aria-label="NFL">&#127944;</button>
-      </div>
-    </div>
-    <div class="header-right">
-      <button id="stats-btn" class="icon-btn" aria-label="Stats">&#128202;</button>
-    </div>
-  </header>
 
-  <main>
-    <div class="puzzle-header">
-      <div id="puzzle-number" class="puzzle-number"></div>
-      <button id="refresh-btn" class="refresh-btn" aria-label="New puzzle">&#8635;</button>
+  <!-- Landing Screen -->
+  <div id="landing" class="landing">
+    <div class="landing-bg"></div>
+    <div class="landing-content">
+      <h1 class="landing-title">Playdoku</h1>
+      <p class="landing-subtitle">Daily Sports Trivia Grid</p>
+      <div class="landing-cards">
+        <button class="landing-card" data-sport="football" style="--card-delay: 0s; --card-color: #1B5E20;">
+          <div class="landing-card-icon">&#9917;</div>
+          <div class="landing-card-name">Football</div>
+          <div class="landing-card-desc">Clubs, countries, leagues & more</div>
+        </button>
+        <button class="landing-card" data-sport="basketball" style="--card-delay: 0.1s; --card-color: #C35817;">
+          <div class="landing-card-icon">&#127936;</div>
+          <div class="landing-card-name">Basketball</div>
+          <div class="landing-card-desc">NBA teams, positions & awards</div>
+        </button>
+        <button class="landing-card" data-sport="nfl" style="--card-delay: 0.2s; --card-color: #013369;">
+          <div class="landing-card-icon">&#127944;</div>
+          <div class="landing-card-name">NFL</div>
+          <div class="landing-card-desc">All 32 teams, positions & awards</div>
+        </button>
+      </div>
+      <p class="landing-hint">Select a sport to start today's puzzle</p>
     </div>
-    <div id="grid-container" class="grid-container">
-      <!-- Grid is built dynamically by JS -->
-    </div>
-    <div id="game-actions" class="game-actions">
-      <button id="share-btn" class="btn btn-primary" style="display:none;">Share Results</button>
-    </div>
-  </main>
+  </div>
+
+  <!-- Game Screen (hidden initially) -->
+  <div id="game-screen" class="game-screen hidden">
+    <header>
+      <div class="header-left">
+        <button id="home-btn" class="icon-btn" aria-label="Back to home">&#8592;</button>
+      </div>
+      <div class="header-center">
+        <h1>Playdoku</h1>
+        <div class="sport-toggle">
+          <button class="sport-btn active" data-sport="football" aria-label="Football">&#9917;</button>
+          <button class="sport-btn" data-sport="basketball" aria-label="Basketball">&#127936;</button>
+          <button class="sport-btn" data-sport="nfl" aria-label="NFL">&#127944;</button>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="info-btn" class="icon-btn" aria-label="How to play">?</button>
+        <button id="stats-btn" class="icon-btn" aria-label="Stats">&#128202;</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="puzzle-header">
+        <div id="puzzle-number" class="puzzle-number"></div>
+        <button id="refresh-btn" class="refresh-btn" aria-label="New puzzle">&#8635;</button>
+      </div>
+      <div id="grid-container" class="grid-container">
+      </div>
+      <div id="game-actions" class="game-actions">
+        <button id="share-btn" class="btn btn-primary" style="display:none;">Share Results</button>
+      </div>
+    </main>
+
+    <footer>
+      <p>A new puzzle every day &bull; <a href="https://github.com/reuben12358/Playdoku" target="_blank">GitHub</a></p>
+    </footer>
+  </div>
 
   <!-- Search Modal -->
   <div id="search-modal" class="modal" style="display:none;">
@@ -64,11 +99,11 @@
         <button class="modal-close" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Fill in the 3x3 grid with football players who match <strong>both</strong> the row and column categories.</p>
+        <p>Fill in the 3x3 grid with players who match <strong>both</strong> the row and column categories.</p>
         <ul>
           <li>Click a cell to search for a player</li>
-          <li>The player must have played for the club, be from the country, or match the category for both the row and column</li>
-          <li>Each cell can only be attempted once</li>
+          <li>The player must match the category for both the row and column</li>
+          <li>Incorrect guesses can be retried</li>
           <li>A new puzzle appears every day!</li>
         </ul>
       </div>
@@ -121,10 +156,6 @@
       </div>
     </div>
   </div>
-
-  <footer>
-    <p>A new puzzle every day &bull; <a href="https://github.com/reuben12358/Playdoku" target="_blank">GitHub</a></p>
-  </footer>
 
   <div id="toast" class="toast"></div>
 
