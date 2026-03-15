@@ -204,22 +204,24 @@ function createPlayerItem(player) {
   return li;
 }
 
-function selectPlayer(player) {
+async function selectPlayer(player) {
   if (!selectedCell) return;
 
   const { row, col } = selectedCell;
   const rowCat = puzzle.rows[row];
   const colCat = puzzle.cols[col];
 
-  const matchesRow = matchesCategory(player, rowCat);
-  const matchesCol = matchesCategory(player, colCat);
+  // Enrich player with API data so recent transfers/full career are included
+  const enriched = await enrichPlayerData(player);
+
+  const matchesRow = matchesCategory(enriched, rowCat);
+  const matchesCol = matchesCategory(enriched, colCat);
   const isCorrect = matchesRow && matchesCol;
 
-  game.makeGuess(row, col, player.name, isCorrect);
+  game.makeGuess(row, col, enriched.name, isCorrect);
 
   closeModal('search-modal');
   renderGrid();
-
 
   if (isCorrect) {
     showToast('Correct!');
@@ -233,6 +235,25 @@ function selectPlayer(player) {
   }
 
   selectedCell = null;
+}
+
+async function enrichPlayerData(player) {
+  try {
+    const apiResults = await searchPlayersAPI(player.name, currentSport.apiSportFilter);
+    const apiMatch = apiResults.find(p => p.name.toLowerCase() === player.name.toLowerCase());
+    if (!apiMatch) return player;
+
+    return {
+      ...player,
+      clubs: [...new Set([...(player.clubs || []), ...(apiMatch.clubs || [])])],
+      positions: [...new Set([...(player.positions || []), ...(apiMatch.positions || [])])],
+      country: player.country || apiMatch.country,
+      leagues: [...new Set([...(player.leagues || []), ...(apiMatch.leagues || [])])],
+      awards: [...new Set([...(player.awards || []), ...(apiMatch.awards || [])])],
+    };
+  } catch (e) {
+    return player;
+  }
 }
 
 function fuzzyMatch(a, b) {
