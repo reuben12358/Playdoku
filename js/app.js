@@ -2,11 +2,13 @@ import { generatePuzzle, getPuzzleNumber } from './puzzle.js';
 import { GameState } from './game.js';
 import { showToast } from './utils.js';
 import { searchPlayersAPI } from './api.js';
+import { SPORTS } from './sports.js';
 
 let players = [];
 let puzzle = null;
 let game = null;
 let selectedCell = null;
+let currentSport = null;
 
 function renderHeaderContent(cat) {
   if (cat.flag) {
@@ -15,11 +17,21 @@ function renderHeaderContent(cat) {
   return `<span class="header-emoji">${cat.emoji}</span><span class="header-text">${cat.label}</span>`;
 }
 
-async function init() {
-  const res = await fetch('data/players.json');
+async function init(sportId) {
+  const sport = SPORTS[sportId];
+  if (!sport) return;
+  currentSport = sport;
+
+  // Apply theme
+  document.documentElement.style.setProperty('--primary', sport.theme.primary);
+  document.documentElement.style.setProperty('--primary-light', sport.theme.primaryLight);
+  document.documentElement.style.setProperty('--primary-dark', sport.theme.primaryDark);
+
+  // Load player data
+  const res = await fetch(sport.dataFile);
   players = await res.json();
 
-  // Remove duplicates by name (keep first occurrence)
+  // Remove duplicates
   const seen = new Set();
   players = players.filter(p => {
     const key = p.name.toLowerCase();
@@ -28,33 +40,34 @@ async function init() {
     return true;
   });
 
-  puzzle = generatePuzzle(players);
-  game = new GameState(puzzle);
+  puzzle = generatePuzzle(players, sport.categories, sport.seedOffset);
+  game = new GameState(puzzle, sport.id);
 
   renderPuzzleNumber();
   renderGrid();
   updateGuessesDisplay();
-  setupModals();
 
   if (game.isComplete()) {
     showShareButton();
   }
+
+  // Save sport preference
+  localStorage.setItem('playdoku_sport', sportId);
 }
 
 function renderPuzzleNumber() {
-  document.getElementById('puzzle-number').textContent = `Puzzle #${getPuzzleNumber()}`;
+  const icon = currentSport.icon;
+  document.getElementById('puzzle-number').textContent = `${icon} Puzzle #${getPuzzleNumber()}`;
 }
 
 function renderGrid() {
   const container = document.getElementById('grid-container');
   container.innerHTML = '';
 
-  // Corner cell
   const corner = document.createElement('div');
   corner.className = 'grid-corner';
   container.appendChild(corner);
 
-  // Column headers
   puzzle.cols.forEach(cat => {
     const header = document.createElement('div');
     header.className = 'grid-header col-header';
@@ -62,15 +75,12 @@ function renderGrid() {
     container.appendChild(header);
   });
 
-  // Rows
   puzzle.rows.forEach((rowCat, r) => {
-    // Row header
     const rowHeader = document.createElement('div');
     rowHeader.className = 'grid-header row-header';
     rowHeader.innerHTML = renderHeaderContent(rowCat);
     container.appendChild(rowHeader);
 
-    // Cells
     puzzle.cols.forEach((colCat, c) => {
       const cell = document.createElement('div');
       cell.className = 'grid-cell';
@@ -84,7 +94,7 @@ function renderGrid() {
           cell.innerHTML = `<span class="cell-player">${state.playerName}</span>`;
         } else {
           cell.classList.add('incorrect', 'locked');
-          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">✗</span>`;
+          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">\u2717</span>`;
         }
       } else if (game.isComplete()) {
         cell.classList.add('locked');
@@ -134,7 +144,6 @@ function setupSearch() {
 
       if (query.length < 2) return;
 
-      // Show local results immediately
       const localMatches = players
         .filter(p => p.name.toLowerCase().includes(query))
         .slice(0, 10);
@@ -145,11 +154,9 @@ function setupSearch() {
         resultsList.appendChild(createPlayerItem(player, false));
       });
 
-      // Fetch API results after a longer delay (to respect rate limits)
       if (query.length >= 3) {
         apiTimer = setTimeout(async () => {
-          const apiResults = await searchPlayersAPI(query);
-          // Add API results that aren't already shown from local DB
+          const apiResults = await searchPlayersAPI(query, currentSport.apiSportFilter);
           const newResults = apiResults.filter(p => !shownNames.has(p.name.toLowerCase()));
 
           if (newResults.length > 0 && input.value.trim().toLowerCase() === query) {
@@ -230,7 +237,6 @@ function showShareButton() {
 
 function showGameOver() {
   const score = game.getScore();
-  const modal = document.getElementById('gameover-modal');
   const title = document.getElementById('gameover-title');
   const message = document.getElementById('gameover-message');
   const grid = document.getElementById('gameover-grid');
@@ -251,37 +257,38 @@ function showGameOver() {
       const state = game.getCellState(r, c);
       if (state && state.correct) {
         cellDiv.style.background = '#C8E6C9';
-        cellDiv.textContent = '🟩';
+        cellDiv.textContent = '\u{1F7E9}';
       } else if (state && !state.correct) {
         cellDiv.style.background = '#FFCDD2';
-        cellDiv.textContent = '🟥';
+        cellDiv.textContent = '\u{1F7E5}';
       } else {
         cellDiv.style.background = '#E0E0E0';
-        cellDiv.textContent = '⬜';
+        cellDiv.textContent = '\u2B1C';
       }
       grid.appendChild(cellDiv);
     }
   }
 
-  modal.style.display = 'flex';
+  document.getElementById('gameover-modal').style.display = 'flex';
 }
 
 function shareResults() {
   const score = game.getScore();
   const num = getPuzzleNumber();
-  let text = `Playdoku #${num} - ${score}/9\n`;
+  const sportLabel = currentSport.label;
+  let text = `Playdoku ${sportLabel} #${num} - ${score}/9\n`;
 
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
       const state = game.getCellState(r, c);
-      if (state && state.correct) text += '🟩';
-      else if (state && !state.correct) text += '🟥';
-      else text += '⬜';
+      if (state && state.correct) text += '\u{1F7E9}';
+      else if (state && !state.correct) text += '\u{1F7E5}';
+      else text += '\u2B1C';
     }
     text += '\n';
   }
 
-  text += 'playdoku.github.io';
+  text += 'reuben12358.github.io/Playdoku';
 
   if (navigator.clipboard) {
     navigator.clipboard.writeText(text).then(() => {
@@ -292,8 +299,25 @@ function shareResults() {
   }
 }
 
+function setupSportToggle() {
+  document.querySelectorAll('.sport-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const sportId = btn.dataset.sport;
+      if (currentSport && currentSport.id === sportId) return;
+
+      // Update active button
+      document.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Hide share button for new sport
+      document.getElementById('share-btn').style.display = 'none';
+
+      init(sportId);
+    });
+  });
+}
+
 function setupModals() {
-  // Close modals
   document.querySelectorAll('.modal-overlay, .modal-close').forEach(el => {
     el.addEventListener('click', (e) => {
       const modal = e.target.closest('.modal');
@@ -301,25 +325,21 @@ function setupModals() {
     });
   });
 
-  // Info modal
   document.getElementById('info-btn').addEventListener('click', () => {
     document.getElementById('info-modal').style.display = 'flex';
   });
 
-  // Stats modal
   document.getElementById('stats-btn').addEventListener('click', () => {
     updateStatsDisplay();
     document.getElementById('stats-modal').style.display = 'flex';
   });
 
-  // Share buttons
   document.getElementById('share-btn').addEventListener('click', shareResults);
   document.getElementById('gameover-share-btn').addEventListener('click', shareResults);
 
-  // Search
   setupSearch();
+  setupSportToggle();
 
-  // Keyboard close
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
@@ -339,4 +359,11 @@ function updateStatsDisplay() {
   document.getElementById('stat-best').textContent = stats.bestStreak;
 }
 
-init();
+// Start app
+const savedSport = localStorage.getItem('playdoku_sport') || 'football';
+// Set initial active button
+document.querySelectorAll('.sport-btn').forEach(b => {
+  b.classList.toggle('active', b.dataset.sport === savedSport);
+});
+setupModals();
+init(savedSport);

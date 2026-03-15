@@ -1,11 +1,11 @@
-const STORAGE_KEY = 'playdoku_state';
-const STATS_KEY = 'playdoku_stats';
-
 export class GameState {
-  constructor(puzzle) {
+  constructor(puzzle, sportId = 'football') {
     this.puzzle = puzzle;
+    this.sportId = sportId;
+    this.storageKey = `playdoku_state_${sportId}`;
+    this.statsKey = `playdoku_stats_${sportId}`;
     this.maxGuesses = 9;
-    this.cells = {}; // "r,c" => { correct: bool, playerName: string }
+    this.cells = {};
     this.guessesUsed = 0;
 
     this.loadState();
@@ -18,7 +18,7 @@ export class GameState {
 
   loadState() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      const saved = JSON.parse(localStorage.getItem(this.storageKey));
       if (saved && saved.date === this.getStorageDate() && saved.seed === this.puzzle.seed) {
         this.cells = saved.cells || {};
         this.guessesUsed = saved.guessesUsed || 0;
@@ -35,12 +35,12 @@ export class GameState {
       cells: this.cells,
       guessesUsed: this.guessesUsed,
     };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(this.storageKey, JSON.stringify(data));
   }
 
   makeGuess(row, col, playerName, isCorrect) {
     const key = `${row},${col}`;
-    if (this.cells[key]) return; // already guessed
+    if (this.cells[key]) return;
     if (this.guessesUsed >= this.maxGuesses) return;
 
     this.cells[key] = { correct: isCorrect, playerName };
@@ -72,7 +72,7 @@ export class GameState {
     const stats = this.getStats();
     const today = this.getStorageDate();
 
-    if (stats.lastDate === today) return; // already recorded
+    if (stats.lastDate === today) return;
 
     stats.played++;
     stats.totalCorrect += this.getScore();
@@ -87,12 +87,12 @@ export class GameState {
     }
 
     stats.lastDate = today;
-    localStorage.setItem(STATS_KEY, JSON.stringify(stats));
+    localStorage.setItem(this.statsKey, JSON.stringify(stats));
   }
 
   getStats() {
     try {
-      const saved = JSON.parse(localStorage.getItem(STATS_KEY));
+      const saved = JSON.parse(localStorage.getItem(this.statsKey));
       if (saved) return saved;
     } catch (e) {
       // ignore
