@@ -130,6 +130,12 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     const colHasCountry = cols.some(c => c.type === 'country');
     if (rowHasCountry && colHasCountry) continue;
 
+    // League/conference can only appear in rows OR cols, not both
+    // (a player is in exactly one league/conference at a time)
+    const rowHasLeague = rows.some(c => c.type === 'league');
+    const colHasLeague = cols.some(c => c.type === 'league');
+    if (rowHasLeague && colHasLeague) continue;
+
     if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }

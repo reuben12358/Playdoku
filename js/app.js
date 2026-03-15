@@ -11,6 +11,8 @@ let selectedCell = null;
 let currentSport = null;
 let currentVariation = 0;
 
+const fahhSound = new Audio('https://www.myinstants.com/media/sounds/fahhh_KcgAXfs.mp3');
+
 function renderHeaderContent(cat) {
   if (cat.logo) {
     return `<img class="header-logo" src="${cat.logo}" alt="${cat.label}"><span class="header-text">${cat.label}</span>`;
@@ -226,6 +228,8 @@ async function selectPlayer(player) {
   if (isCorrect) {
     showToast('Correct!');
   } else {
+    fahhSound.currentTime = 0;
+    fahhSound.play().catch(() => {});
     showToast('Incorrect!');
   }
 
