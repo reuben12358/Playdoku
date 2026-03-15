@@ -86,14 +86,14 @@ main {
 /* Grid */
 .grid-container {
   display: grid;
-  grid-template-columns: minmax(80px, 120px) repeat(3, minmax(80px, 110px));
-  grid-template-rows: minmax(50px, 70px) repeat(3, minmax(80px, 110px));
+  grid-template-columns: 100px repeat(3, 1fr);
+  grid-template-rows: 70px repeat(3, 100px);
   gap: 2px;
   background: var(--cell-border);
   border-radius: var(--radius);
   overflow: hidden;
   box-shadow: var(--shadow);
-  max-width: 480px;
+  max-width: 520px;
   width: 100%;
 }
 
@@ -130,7 +130,9 @@ main {
 }
 
 .grid-header .header-text {
-  font-size: 0.65rem;
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .grid-cell {
@@ -429,12 +431,12 @@ footer a:hover {
 /* Responsive */
 @media (max-width: 400px) {
   .grid-container {
-    grid-template-columns: minmax(60px, 90px) repeat(3, 1fr);
-    grid-template-rows: minmax(40px, 60px) repeat(3, minmax(70px, 90px));
+    grid-template-columns: 75px repeat(3, 1fr);
+    grid-template-rows: 60px repeat(3, 80px);
   }
 
   .grid-header .header-text {
-    font-size: 0.55rem;
+    font-size: 0.6rem;
   }
 
   .grid-header .header-emoji {
@@ -448,12 +450,13 @@ footer a:hover {
 
 @media (min-width: 600px) {
   .grid-container {
-    grid-template-columns: 140px repeat(3, 130px);
-    grid-template-rows: 80px repeat(3, 130px);
+    grid-template-columns: 120px repeat(3, 1fr);
+    grid-template-rows: 80px repeat(3, 120px);
+    max-width: 560px;
   }
 
   .grid-header .header-text {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
   }
 
   .grid-cell .cell-player {
