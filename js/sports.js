@@ -162,10 +162,7 @@ export const SPORTS = {
         { id: 'jaguars', label: 'Jaguars', value: 'Jacksonville Jaguars', type: 'club', emoji: '\u{1F7E0}' },
         { id: 'commanders', label: 'Commanders', value: 'Washington Commanders', type: 'club', emoji: '\u{1F534}\u{1F49B}' },
       ],
-      countries: [
-        { id: 'usa_nfl', label: 'USA', value: 'USA', type: 'country', flag: 'us' },
-        { id: 'am_samoa', label: 'American Samoa', value: 'American Samoa', type: 'country', flag: 'as' },
-      ],
+      countries: [],
       leagues: [
         { id: 'afc', label: 'AFC', value: 'AFC', type: 'league', emoji: '\u{1F534}' },
         { id: 'nfc', label: 'NFC', value: 'NFC', type: 'league', emoji: '\u{1F535}' },

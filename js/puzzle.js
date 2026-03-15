@@ -111,8 +111,8 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
       if (cat.type === 'club' && tc >= 4) continue;
       if (cat.type === 'country' && tc >= 2) continue;
       if (cat.type === 'league' && tc >= 2) continue;
-      if (cat.type === 'position' && tc >= 1) continue;
-      if (cat.type === 'award' && tc >= 1) continue;
+      if (cat.type === 'position' && tc >= 2) continue;
+      if (cat.type === 'award' && tc >= 2) continue;
 
       if (countMatches(players, cat) < 3) continue;
 
