@@ -179,7 +179,7 @@ export const SPORTS = {
     dataFile: 'data/cricket_players.json',
     apiSportFilter: 'Cricket',
     seedOffset: 3,
-    theme: { primary: '#1565C0', primaryLight: '#1E88E5', primaryDark: '#0D47A1' },
+    theme: { primary: '#8B1A1A', primaryLight: '#A52A2A', primaryDark: '#5C1010' },
     categories: {
       clubs: [
         { id: 'csk', label: 'CSK', value: 'Chennai Super Kings', type: 'club', emoji: '\u{1F49B}', logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/2/2b/Chennai_Super_Kings_Logo.svg/200px-Chennai_Super_Kings_Logo.svg.png' },
