@@ -73,9 +73,6 @@ function isValidLayout(rows, cols) {
   // Country must NOT appear in both rows and cols (player has one nationality)
   if (rows.some(c => c.type === 'country') && cols.some(c => c.type === 'country')) return false;
 
-  // League must NOT appear in both rows and cols (player in one league/conf at a time)
-  if (rows.some(c => c.type === 'league') && cols.some(c => c.type === 'league')) return false;
-
   // No two identical categories
   const ids = allCats.map(c => c.id);
   if (new Set(ids).size !== ids.length) return false;
@@ -125,9 +122,10 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     for (const cat of shuffled) {
       const tc = typeCounts[cat.type] || 0;
 
-      // Hard limits: max 1 country, max 1 league (prevents cross-axis conflicts)
+      // Hard limit: max 1 country (player has one nationality, can't cross axes)
       if (cat.type === 'country' && tc >= 1) continue;
-      if (cat.type === 'league' && tc >= 1) continue;
+      // Leagues are fine to have multiple (players play in multiple leagues across career)
+      if (cat.type === 'league' && tc >= 2) continue;
       if (cat.type === 'club' && tc >= 4) continue;
       if (cat.type === 'position' && tc >= 2) continue;
       if (cat.type === 'award' && tc >= 2) continue;
