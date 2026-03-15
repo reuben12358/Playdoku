@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=3';
-import { GameState } from './game.js?v=3';
-import { showToast } from './utils.js?v=3';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=3';
-import { SPORTS } from './sports.js?v=3';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=4';
+import { GameState } from './game.js?v=4';
+import { showToast } from './utils.js?v=4';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=4';
+import { SPORTS } from './sports.js?v=4';
 
 let players = [];
 let puzzle = null;
@@ -10,6 +10,35 @@ let game = null;
 let selectedCell = null;
 let currentSport = null;
 let currentVariation = 0;
+
+// ENFORCER: Guarantees countries NEVER appear on both rows and columns.
+// Called after every puzzle generation as a last line of defense.
+function enforceCountryRule(puzzle) {
+  const rowCountries = puzzle.rows.filter(c => c.type === 'country');
+  const colCountries = puzzle.cols.filter(c => c.type === 'country');
+
+  // If countries are on both axes, move ALL countries to whichever axis has more
+  if (rowCountries.length > 0 && colCountries.length > 0) {
+    const allCountries = [...rowCountries, ...colCountries];
+    const rowNonCountries = puzzle.rows.filter(c => c.type !== 'country');
+    const colNonCountries = puzzle.cols.filter(c => c.type !== 'country');
+    const allNonCountries = [...rowNonCountries, ...colNonCountries];
+
+    if (allCountries.length <= 3) {
+      // Put all countries in rows, fill rest with non-countries
+      puzzle.rows = [...allCountries, ...allNonCountries.slice(0, 3 - allCountries.length)];
+      puzzle.cols = allNonCountries.slice(3 - allCountries.length, 3 - allCountries.length + 3);
+    } else {
+      // Too many countries, just remove them from one axis
+      puzzle.rows = [...rowCountries.length >= colCountries.length ? rowCountries : rowNonCountries,
+                      ...rowCountries.length >= colCountries.length ? rowNonCountries : rowCountries].slice(0, 3);
+      puzzle.cols = colCountries.length > rowCountries.length
+        ? [...colCountries, ...colNonCountries].slice(0, 3)
+        : colNonCountries.slice(0, 3);
+    }
+  }
+  return puzzle;
+}
 
 const fahhSound = new Audio('https://www.myinstants.com/media/sounds/fahhh_KcgAXfs.mp3');
 
@@ -52,6 +81,7 @@ async function init(sportId) {
   currentVariation = savedVar ? parseInt(savedVar, 10) : 0;
 
   puzzle = generatePuzzle(players, sport.categories, sport.seedOffset, currentVariation);
+  puzzle = enforceCountryRule(puzzle);
 
   // Fetch team logos for club categories in this puzzle
   const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
@@ -385,6 +415,7 @@ async function refreshPuzzle() {
   // Clear game state for current sport
   localStorage.removeItem(`playdoku_state_${currentSport.id}`);
   puzzle = generatePuzzle(players, currentSport.categories, currentSport.seedOffset, currentVariation);
+  puzzle = enforceCountryRule(puzzle);
 
   // Fetch logos for new puzzle's club categories
   const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
