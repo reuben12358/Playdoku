@@ -142,42 +142,51 @@ function setupSearch() {
     clearTimeout(debounceTimer);
     clearTimeout(apiTimer);
 
-    debounceTimer = setTimeout(() => {
+    debounceTimer = setTimeout(async () => {
       const query = input.value.trim().toLowerCase();
       resultsList.innerHTML = '';
 
       if (query.length < 2) return;
 
+      // Show local matches instantly
       const localMatches = players
         .filter(p => p.name.toLowerCase().includes(query))
-        .slice(0, 10);
-
+        .slice(0, 8);
       const shownNames = new Set(localMatches.map(p => p.name.toLowerCase()));
 
       localMatches.forEach(player => {
-        resultsList.appendChild(createPlayerItem(player, false));
+        resultsList.appendChild(createPlayerItem(player));
       });
 
-      if (query.length >= 3) {
-        apiTimer = setTimeout(async () => {
-          const apiResults = await searchPlayersAPI(query, currentSport.apiSportFilter);
-          const newResults = apiResults.filter(p => !shownNames.has(p.name.toLowerCase()));
+      // Show loading indicator
+      if (query.length >= 2) {
+        const loading = document.createElement('li');
+        loading.className = 'search-loading';
+        loading.textContent = 'Searching all players...';
+        resultsList.appendChild(loading);
 
-          if (newResults.length > 0 && input.value.trim().toLowerCase() === query) {
-            newResults.slice(0, 8).forEach(player => {
-              resultsList.appendChild(createPlayerItem(player, true));
-            });
-          }
-        }, 300);
+        // Fetch from API
+        const apiResults = await searchPlayersAPI(query, currentSport.apiSportFilter);
+
+        // Remove loading indicator
+        const loadingEl = resultsList.querySelector('.search-loading');
+        if (loadingEl) loadingEl.remove();
+
+        // Only update if query hasn't changed
+        if (input.value.trim().toLowerCase() === query) {
+          const newResults = apiResults.filter(p => !shownNames.has(p.name.toLowerCase()));
+          newResults.slice(0, 20).forEach(player => {
+            resultsList.appendChild(createPlayerItem(player));
+          });
+        }
       }
-    }, 150);
+    }, 200);
   });
 }
 
-function createPlayerItem(player, isFromAPI) {
+function createPlayerItem(player) {
   const li = document.createElement('li');
-  const badge = isFromAPI ? '<span class="api-badge">LIVE</span>' : '';
-  li.innerHTML = `${player.name}${badge}<span class="player-country">${player.country}</span>`;
+  li.innerHTML = `${player.name}<span class="player-country">${player.country}</span>`;
   li.addEventListener('click', () => selectPlayer(player));
   return li;
 }
@@ -352,11 +361,6 @@ function setupModals() {
   document.getElementById('gameover-share-btn').addEventListener('click', shareResults);
   document.getElementById('refresh-btn').addEventListener('click', refreshPuzzle);
 
-  document.getElementById('players-btn').addEventListener('click', () => {
-    openPlayersModal();
-  });
-
-  setupPlayersModal();
 
   setupSearch();
   setupSportToggle();
@@ -365,138 +369,6 @@ function setupModals() {
     if (e.key === 'Escape') {
       document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
     }
-  });
-}
-
-function openPlayersModal() {
-  const modal = document.getElementById('players-modal');
-  const title = document.getElementById('players-modal-title');
-  title.textContent = `${currentSport.icon} All ${currentSport.label} Players`;
-
-  // Populate filter dropdowns
-  const typeSelect = document.getElementById('players-filter-type');
-  const valueSelect = document.getElementById('players-filter-value');
-
-  typeSelect.innerHTML = '<option value="all">All Categories</option>';
-  const types = [
-    { value: 'club', label: 'Team' },
-    { value: 'country', label: 'Country' },
-    { value: 'position', label: 'Position' },
-    { value: 'award', label: 'Award' },
-  ];
-  types.forEach(t => {
-    // Only add if the sport has categories of this type
-    const cats = currentSport.categories;
-    const hasType = (t.value === 'club' && cats.clubs.length) ||
-      (t.value === 'country' && cats.countries.length) ||
-      (t.value === 'position' && cats.positions.length) ||
-      (t.value === 'award' && cats.awards.length);
-    if (hasType) {
-      const opt = document.createElement('option');
-      opt.value = t.value;
-      opt.textContent = t.label;
-      typeSelect.appendChild(opt);
-    }
-  });
-
-  valueSelect.innerHTML = '<option value="all">All</option>';
-  document.getElementById('players-search').value = '';
-
-  renderPlayersList();
-  modal.style.display = 'flex';
-  document.getElementById('players-search').focus();
-}
-
-function setupPlayersModal() {
-  const typeSelect = document.getElementById('players-filter-type');
-  const valueSelect = document.getElementById('players-filter-value');
-  const searchInput = document.getElementById('players-search');
-
-  typeSelect.addEventListener('change', () => {
-    // Populate value dropdown based on type
-    valueSelect.innerHTML = '<option value="all">All</option>';
-    const type = typeSelect.value;
-    if (type === 'all') { renderPlayersList(); return; }
-
-    const cats = currentSport.categories;
-    let items = [];
-    if (type === 'club') items = cats.clubs;
-    else if (type === 'country') items = cats.countries;
-    else if (type === 'position') items = cats.positions;
-    else if (type === 'award') items = cats.awards;
-
-    items.forEach(cat => {
-      const opt = document.createElement('option');
-      opt.value = cat.value;
-      opt.textContent = cat.label;
-      valueSelect.appendChild(opt);
-    });
-
-    renderPlayersList();
-  });
-
-  valueSelect.addEventListener('change', renderPlayersList);
-
-  let debounce;
-  searchInput.addEventListener('input', () => {
-    clearTimeout(debounce);
-    debounce = setTimeout(renderPlayersList, 150);
-  });
-}
-
-function renderPlayersList() {
-  const list = document.getElementById('players-list');
-  const search = document.getElementById('players-search').value.trim().toLowerCase();
-  const type = document.getElementById('players-filter-type').value;
-  const value = document.getElementById('players-filter-value').value;
-
-  let filtered = [...players];
-
-  // Search filter
-  if (search.length > 0) {
-    filtered = filtered.filter(p => p.name.toLowerCase().includes(search));
-  }
-
-  // Category filter
-  if (type !== 'all' && value !== 'all') {
-    filtered = filtered.filter(p => {
-      const v = value.toLowerCase();
-      if (type === 'club') return p.clubs.some(c => c.toLowerCase() === v);
-      if (type === 'country') return p.country.toLowerCase() === v;
-      if (type === 'position') return p.positions.some(pos => pos.toLowerCase() === v);
-      if (type === 'award') return p.awards.some(a => a.toLowerCase() === v);
-      return true;
-    });
-  } else if (type !== 'all' && value === 'all') {
-    // Filter by type broadly — show all who have any value of this type
-    // (essentially all players for club/country/position)
-  }
-
-  // Sort alphabetically
-  filtered.sort((a, b) => a.name.localeCompare(b.name));
-
-  document.getElementById('players-count-num').textContent = filtered.length;
-
-  list.innerHTML = '';
-  filtered.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'player-card';
-
-    const clubs = p.clubs ? p.clubs.join(', ') : '';
-    const positions = p.positions ? p.positions.join(', ') : '';
-    const awards = p.awards && p.awards.length ? p.awards.join(', ') : '';
-
-    let html = `<div class="player-card-name">${p.name}</div>`;
-    html += `<div class="player-card-detail">${p.country} &bull; ${positions}</div>`;
-    html += `<div class="player-card-detail">${clubs}</div>`;
-    if (awards) {
-      html += `<div class="player-card-tags">`;
-      p.awards.forEach(a => { html += `<span class="player-tag">${a}</span>`; });
-      html += `</div>`;
-    }
-
-    card.innerHTML = html;
-    list.appendChild(card);
   });
 }
 
