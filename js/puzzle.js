@@ -60,18 +60,14 @@ function getValidPlayers(players, rowCat, colCat) {
   return players.filter(p => matchesCat(p, rowCat) && matchesCat(p, colCat));
 }
 
-// Hard check: no two categories of the same "exclusive" type across rows and cols
+// Hard check: country must not appear on both axes, no duplicate categories
 function isValidLayout(rows, cols) {
   const allCats = [...rows, ...cols];
 
-  // No duplicate types within rows or within cols
-  const rowTypes = rows.map(c => c.type);
-  const colTypes = cols.map(c => c.type);
-  if (new Set(rowTypes).size !== rowTypes.length) return false;
-  if (new Set(colTypes).size !== colTypes.length) return false;
-
   // Country must NOT appear in both rows and cols (player has one nationality)
-  if (rows.some(c => c.type === 'country') && cols.some(c => c.type === 'country')) return false;
+  const rowHasCountry = rows.some(c => c.type === 'country');
+  const colHasCountry = cols.some(c => c.type === 'country');
+  if (rowHasCountry && colHasCountry) return false;
 
   // No two identical categories
   const ids = allCats.map(c => c.id);
@@ -116,46 +112,59 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
   for (let attempt = 0; attempt < 500; attempt++) {
     const shuffled = shuffle(allCats, rng);
 
+    // Pick 6 unique categories with enough matching players
     const picked = [];
-    const typeCounts = {};
-
+    const usedIds = new Set();
     for (const cat of shuffled) {
-      const tc = typeCounts[cat.type] || 0;
-
-      // Hard limit: max 1 country (player has one nationality, can't cross axes)
-      if (cat.type === 'country' && tc >= 1) continue;
-      // Leagues are fine to have multiple (players play in multiple leagues across career)
-      if (cat.type === 'league' && tc >= 2) continue;
-      if (cat.type === 'club' && tc >= 4) continue;
-      if (cat.type === 'position' && tc >= 2) continue;
-      if (cat.type === 'award' && tc >= 2) continue;
-
+      if (usedIds.has(cat.id)) continue;
       if (countMatches(players, cat) < 2) continue;
-
       picked.push(cat);
-      typeCounts[cat.type] = tc + 1;
-
+      usedIds.add(cat.id);
       if (picked.length === 6) break;
     }
 
     if (picked.length < 6) continue;
 
-    const rows = picked.slice(0, 3);
-    const cols = picked.slice(3, 6);
+    // COUNTRY RULE: all countries must go on ONE axis (rows or cols), never split.
+    // Separate countries from non-countries, then place countries together on one side.
+    const countries = picked.filter(c => c.type === 'country');
+    const others = picked.filter(c => c.type !== 'country');
+
+    let rows, cols;
+    if (countries.length === 0) {
+      // No countries — just split normally
+      rows = picked.slice(0, 3);
+      cols = picked.slice(3, 6);
+    } else if (countries.length <= 3) {
+      // Put all countries on one axis, fill the rest with non-countries
+      const putCountriesInRows = rng() < 0.5;
+      if (putCountriesInRows) {
+        rows = [...countries, ...others.slice(0, 3 - countries.length)];
+        cols = others.slice(3 - countries.length, 3 - countries.length + 3);
+      } else {
+        cols = [...countries, ...others.slice(0, 3 - countries.length)];
+        rows = others.slice(3 - countries.length, 3 - countries.length + 3);
+      }
+    } else {
+      // More than 3 countries — impossible to fit on one axis, skip
+      continue;
+    }
+
+    if (rows.length !== 3 || cols.length !== 3) continue;
 
     if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
   }
 
-  // Fallback: use only clubs and positions (guaranteed no conflicts)
+  // Fallback: exclude countries to avoid any conflict, use everything else
   const fallbackCats = getAllCategories(categories)
-    .filter(c => (c.type === 'club' || c.type === 'position') && countMatches(players, c) >= 2);
+    .filter(c => c.type !== 'country' && countMatches(players, c) >= 2);
   const fallbackShuffled = shuffle(fallbackCats, rng);
   if (fallbackShuffled.length >= 6) {
     const rows = [fallbackShuffled[0], fallbackShuffled[1], fallbackShuffled[2]];
     const cols = [fallbackShuffled[3], fallbackShuffled[4], fallbackShuffled[5]];
-    if (isValidLayout(rows, cols)) {
+    if (validatePuzzle(players, rows, cols)) {
       return { rows, cols, seed };
     }
   }
