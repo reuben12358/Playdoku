@@ -208,6 +208,12 @@ main {
   box-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
+.grid-header .header-logo {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
 .grid-cell {
   background: var(--card);
   display: flex;
@@ -528,6 +534,11 @@ footer a:hover {
     font-size: 1.1rem;
   }
 
+  .grid-header .header-logo {
+    width: 30px;
+    height: 30px;
+  }
+
   .grid-cell .cell-player {
     font-size: 0.6rem;
   }
@@ -542,6 +553,11 @@ footer a:hover {
 
   .grid-header .header-text {
     font-size: 0.85rem;
+  }
+
+  .grid-header .header-logo {
+    width: 50px;
+    height: 50px;
   }
 
   .grid-cell .cell-player {

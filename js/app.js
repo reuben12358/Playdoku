@@ -1,7 +1,7 @@
 import { generatePuzzle, getPuzzleNumber } from './puzzle.js';
 import { GameState } from './game.js';
 import { showToast } from './utils.js';
-import { searchPlayersAPI } from './api.js';
+import { searchPlayersAPI, getTeamLogo } from './api.js';
 import { SPORTS } from './sports.js';
 
 let players = [];
@@ -12,6 +12,9 @@ let currentSport = null;
 let currentVariation = 0;
 
 function renderHeaderContent(cat) {
+  if (cat.logo) {
+    return `<img class="header-logo" src="${cat.logo}" alt="${cat.label}"><span class="header-text">${cat.label}</span>`;
+  }
   if (cat.flag) {
     return `<img class="header-flag" src="https://flagcdn.com/w80/${cat.flag}.png" alt="${cat.label}">`;
   }
@@ -46,6 +49,15 @@ async function init(sportId) {
   currentVariation = savedVar ? parseInt(savedVar, 10) : 0;
 
   puzzle = generatePuzzle(players, sport.categories, sport.seedOffset, currentVariation);
+
+  // Fetch team logos for club categories in this puzzle
+  const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
+  await Promise.all(clubCats.map(async (cat) => {
+    if (!cat.logo) {
+      cat.logo = await getTeamLogo(cat.value);
+    }
+  }));
+
   game = new GameState(puzzle, sport.id);
 
   renderPuzzleNumber();
@@ -326,13 +338,22 @@ function setupSportToggle() {
   });
 }
 
-function refreshPuzzle() {
+async function refreshPuzzle() {
   if (!currentSport) return;
   currentVariation++;
   localStorage.setItem(`playdoku_variation_${currentSport.id}`, currentVariation);
   // Clear game state for current sport
   localStorage.removeItem(`playdoku_state_${currentSport.id}`);
   puzzle = generatePuzzle(players, currentSport.categories, currentSport.seedOffset, currentVariation);
+
+  // Fetch logos for new puzzle's club categories
+  const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
+  await Promise.all(clubCats.map(async (cat) => {
+    if (!cat.logo) {
+      cat.logo = await getTeamLogo(cat.value);
+    }
+  }));
+
   game = new GameState(puzzle, currentSport.id);
   renderPuzzleNumber();
   renderGrid();

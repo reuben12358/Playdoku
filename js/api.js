@@ -1,4 +1,33 @@
 const searchCache = new Map();
+const logoCache = {};
+
+export async function getTeamLogo(teamName) {
+  if (logoCache[teamName] !== undefined) return logoCache[teamName];
+
+  const stored = localStorage.getItem(`team_logo_${teamName}`);
+  if (stored) {
+    logoCache[teamName] = stored;
+    return stored;
+  }
+
+  try {
+    const res = await fetch(
+      `https://www.thesportsdb.com/api/v1/json/3/searchteams.php?t=${encodeURIComponent(teamName)}`
+    );
+    if (!res.ok) { logoCache[teamName] = null; return null; }
+    const data = await res.json();
+    const team = data.teams?.[0];
+    const badge = team?.strBadge || team?.strTeamBadge;
+    if (badge) {
+      logoCache[teamName] = badge;
+      localStorage.setItem(`team_logo_${teamName}`, badge);
+      return badge;
+    }
+  } catch (e) {}
+
+  logoCache[teamName] = null;
+  return null;
+}
 
 // Wikidata occupation QIDs per sport
 const SPORT_OCCUPATION = {
