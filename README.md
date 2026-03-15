@@ -1,8 +1,8 @@
-# ⚽🏀 Playdoku
+# ⚽🏀🏈 Playdoku
 
 **The daily sports trivia grid game.**
 
-Guess the player that fits both the row and column categories. A new puzzle every day — for **football** and **basketball**!
+Guess the player that fits both the row and column categories. A new puzzle every day — for **football**, **basketball**, and **NFL**!
 
 🔗 **[Play Now → reuben12358.github.io/Playdoku](https://reuben12358.github.io/Playdoku/)**
 
@@ -26,9 +26,9 @@ Guess the player that fits both the row and column categories. A new puzzle ever
 - Each cell can only be attempted once
 - **New puzzle daily** — same puzzle for everyone, powered by a date-seeded algorithm
 
-## 🏟️ Two Sports, One Game
+## 🏟️ Three Sports, One Game
 
-Switch between **Football** and **Basketball** with the toggle in the header. Each sport has its own daily puzzle, stats, and theme.
+Switch between **Football**, **Basketball**, and **NFL** with the toggle in the header. Each sport has its own daily puzzle, stats, and theme.
 
 ### ⚽ Football Categories
 
@@ -50,14 +50,23 @@ Switch between **Football** and **Basketball** with the toggle in the header. Ea
 | **Positions** | Point Guard, Shooting Guard, Small Forward, Power Forward, Center |
 | **Awards** | MVP, NBA Champion, Finals MVP, DPOY |
 
+### 🏈 NFL Categories
+
+| Type | Examples |
+|------|----------|
+| **Teams** | All 32 NFL teams — Chiefs, Patriots, 49ers, Cowboys, Packers, Steelers, Eagles, Ravens, and more |
+| **Conferences** | AFC, NFC |
+| **Positions** | Quarterback, Running Back, Wide Receiver, Tight End, Linebacker, Defensive End, Cornerback, Safety, and more |
+| **Awards** | MVP, Super Bowl Champion, Super Bowl MVP, DPOY |
+
 ## ✨ Features
 
 - 🔄 **Daily puzzles** — deterministic generation means everyone gets the same challenge
-- 🏀⚽ **Two sports** — switch between football and basketball with one tap
+- 🏀⚽🏈 **Three sports** — switch between football, basketball, and NFL with one tap
 - 🔍 **Hybrid search** — local database + live results from TheSportsDB API
 - 💾 **Progress saved** — come back anytime, your game state persists
 - 📊 **Stats tracking** — games played, correct answers, streaks (per sport)
-- 🎨 **Dynamic themes** — green for football, orange for basketball
+- 🎨 **Dynamic themes** — green for football, orange for basketball, navy for NFL
 - 📱 **Mobile-friendly** — plays great on any device
 - 📋 **Shareable results** — share your grid with friends
 
@@ -85,7 +94,8 @@ Playdoku/
 │   └── utils.js          # Toast notifications
 └── data/
     ├── players.json      # Football player database (150+)
-    └── nba_players.json  # Basketball player database (120+)
+    ├── nba_players.json  # Basketball player database (120+)
+    └── nfl_players.json  # NFL player database (120+)
 ```
 
 ## 🚀 Run Locally
@@ -109,5 +119,5 @@ MIT
 ---
 
 <p align="center">
-  Made with ⚽🏀 by <a href="https://github.com/reuben12358">Reuben D'cunha</a>
+  Made with ⚽🏀🏈 by <a href="https://github.com/reuben12358">Reuben D'cunha</a>
 </p>

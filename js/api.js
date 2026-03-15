@@ -16,7 +16,9 @@ export async function searchPlayersAPI(query, sportFilter = 'Soccer') {
     const data = await res.json();
     if (!data.player) return [];
 
-    const mapFn = sportFilter === 'Basketball' ? mapBasketballPosition : mapFootballPosition;
+    const mapFn = sportFilter === 'Basketball' ? mapBasketballPosition
+      : sportFilter === 'American Football' ? mapNFLPosition
+      : mapFootballPosition;
 
     const results = data.player
       .filter(p => p.strSport === sportFilter)
@@ -62,4 +64,20 @@ function mapBasketballPosition(pos) {
     if (p.includes('forward')) positions.push('Small Forward', 'Power Forward');
   }
   return positions;
+}
+
+function mapNFLPosition(pos) {
+  if (!pos) return [];
+  const p = pos.toLowerCase();
+  if (p.includes('quarterback') || p === 'qb') return ['Quarterback'];
+  if (p.includes('running back') || p === 'rb') return ['Running Back'];
+  if (p.includes('wide receiver') || p === 'wr') return ['Wide Receiver'];
+  if (p.includes('tight end') || p === 'te') return ['Tight End'];
+  if (p.includes('defensive end') || p === 'de') return ['Defensive End'];
+  if (p.includes('defensive tackle') || p === 'dt') return ['Defensive Tackle'];
+  if (p.includes('linebacker') || p === 'lb') return ['Linebacker'];
+  if (p.includes('cornerback') || p === 'cb') return ['Cornerback'];
+  if (p.includes('safety') || p === 's' || p === 'ss' || p === 'fs') return ['Safety'];
+  if (p.includes('offensive') || p === 'ol' || p === 'ot' || p === 'og' || p === 'c') return ['Offensive Lineman'];
+  return [];
 }
