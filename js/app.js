@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=12';
-import { GameState } from './game.js?v=12';
-import { showToast } from './utils.js?v=12';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=12';
-import { SPORTS } from './sports.js?v=12';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=13';
+import { GameState } from './game.js?v=13';
+import { showToast } from './utils.js?v=13';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=13';
+import { SPORTS } from './sports.js?v=13';
 
 let players = [];
 let puzzle = null;
@@ -56,6 +56,9 @@ function getTooltip(cat) {
 function renderHeaderContent(cat) {
   if (cat.logo) {
     return `<img class="header-logo" src="${cat.logo}" alt="${cat.label}"><span class="header-text">${cat.label}</span>`;
+  }
+  if (cat.type === 'country' && cat.flagUrl) {
+    return `<img class="header-flag" src="${cat.flagUrl}" alt="${cat.label}">`;
   }
   if (cat.type === 'country' && cat.flag) {
     return `<img class="header-flag" src="https://flagcdn.com/w80/${cat.flag}.png" alt="${cat.label}">`;
