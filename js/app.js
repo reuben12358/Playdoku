@@ -234,18 +234,25 @@ function selectPlayer(player) {
   selectedCell = null;
 }
 
+function fuzzyMatch(a, b) {
+  const al = a.toLowerCase();
+  const bl = b.toLowerCase();
+  return al === bl || al.includes(bl) || bl.includes(al);
+}
+
 function matchesCategory(player, category) {
+  const val = category.value;
   switch (category.type) {
     case 'club':
-      return player.clubs && player.clubs.some(c => c.toLowerCase() === category.value.toLowerCase());
+      return player.clubs && player.clubs.some(c => fuzzyMatch(c, val));
     case 'country':
-      return player.country && player.country.toLowerCase() === category.value.toLowerCase();
+      return player.country && fuzzyMatch(player.country, val);
     case 'league':
-      return player.leagues && player.leagues.some(l => l.toLowerCase() === category.value.toLowerCase());
+      return player.leagues && player.leagues.some(l => fuzzyMatch(l, val));
     case 'position':
-      return player.positions && player.positions.some(p => p.toLowerCase() === category.value.toLowerCase());
+      return player.positions && player.positions.some(p => fuzzyMatch(p, val));
     case 'award':
-      return player.awards && player.awards.some(a => a.toLowerCase() === category.value.toLowerCase());
+      return player.awards && player.awards.some(a => fuzzyMatch(a, val));
     default:
       return false;
   }
