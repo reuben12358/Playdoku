@@ -101,10 +101,7 @@ export const SPORTS = {
         { id: 'cameroon', label: 'Cameroon', value: 'Cameroon', type: 'country', flag: 'cm' },
         { id: 'slovenia', label: 'Slovenia', value: 'Slovenia', type: 'country', flag: 'si' },
       ],
-      leagues: [
-        { id: 'eastern', label: 'Eastern Conf.', value: 'Eastern Conference', type: 'league', emoji: '\u{1F1EA}' },
-        { id: 'western', label: 'Western Conf.', value: 'Western Conference', type: 'league', emoji: '\u{1F1FC}' },
-      ],
+      leagues: [],
       positions: [
         { id: 'pg', label: 'Point Guard', value: 'Point Guard', type: 'position', emoji: '\u{1F3AF}' },
         { id: 'sg', label: 'Shooting Guard', value: 'Shooting Guard', type: 'position', emoji: '\u{1F3B0}' },
@@ -117,6 +114,7 @@ export const SPORTS = {
         { id: 'nba_champ', label: 'NBA Champion', value: 'NBA Champion', type: 'award', emoji: '\u{1F48D}' },
         { id: 'finals_mvp', label: 'Finals MVP', value: 'Finals MVP', type: 'award', emoji: '\u{1F3C6}' },
         { id: 'dpoy', label: 'DPOY', value: 'DPOY', type: 'award', emoji: '\u{1F6E1}\uFE0F' },
+        { id: 'all_star', label: 'All-Star', value: 'All-Star', type: 'award', emoji: '\u2B50' },
       ],
     },
   },
@@ -163,10 +161,7 @@ export const SPORTS = {
         { id: 'commanders', label: 'Commanders', value: 'Washington Commanders', type: 'club', emoji: '\u{1F534}\u{1F49B}' },
       ],
       countries: [],
-      leagues: [
-        { id: 'afc', label: 'AFC', value: 'AFC', type: 'league', emoji: '\u{1F534}' },
-        { id: 'nfc', label: 'NFC', value: 'NFC', type: 'league', emoji: '\u{1F535}' },
-      ],
+      leagues: [],
       positions: [
         { id: 'qb', label: 'Quarterback', value: 'Quarterback', type: 'position', emoji: '\u{1F3AF}' },
         { id: 'rb', label: 'Running Back', value: 'Running Back', type: 'position', emoji: '\u{1F3C3}' },
@@ -181,9 +176,10 @@ export const SPORTS = {
       ],
       awards: [
         { id: 'nfl_mvp', label: 'MVP', value: 'MVP', type: 'award', emoji: '\u{1F3C6}' },
-        { id: 'sb_champ', label: 'Super Bowl Champ', value: 'Super Bowl Champion', type: 'award', emoji: '\u{1F48D}' },
+        { id: 'sb_champ', label: 'Super Bowl Winner', value: 'Super Bowl Champion', type: 'award', emoji: '\u{1F48D}' },
         { id: 'sb_mvp', label: 'Super Bowl MVP', value: 'Super Bowl MVP', type: 'award', emoji: '\u{1F3C6}' },
         { id: 'nfl_dpoy', label: 'DPOY', value: 'DPOY', type: 'award', emoji: '\u{1F6E1}\uFE0F' },
+        { id: 'pro_bowl', label: 'Pro Bowl', value: 'Pro Bowl', type: 'award', emoji: '\u2B50' },
       ],
     },
   },
