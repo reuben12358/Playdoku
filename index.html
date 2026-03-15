@@ -9,7 +9,7 @@
   <meta property="og:description" content="Can you guess the player for each cell? Football, NBA & NFL puzzles every day!">
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9917;</text></svg>">
-  <link rel="stylesheet" href="css/styles.css?v=9">
+  <link rel="stylesheet" href="css/styles.css?v=10">
 </head>
 <body>
 
@@ -35,6 +35,11 @@
           <div class="landing-card-name">NFL</div>
           <div class="landing-card-desc">All 32 teams, positions & awards</div>
         </button>
+        <button class="landing-card" data-sport="cricket" style="--card-delay: 0.3s; --card-color: #1565C0;">
+          <div class="landing-card-icon">&#127951;</div>
+          <div class="landing-card-name">Cricket</div>
+          <div class="landing-card-desc">IPL teams, countries & positions</div>
+        </button>
       </div>
       <p class="landing-hint">Select a sport to start today's puzzle</p>
     </div>
@@ -52,6 +57,7 @@
           <button class="sport-btn active" data-sport="football" aria-label="Football">&#9917;</button>
           <button class="sport-btn" data-sport="basketball" aria-label="Basketball">&#127936;</button>
           <button class="sport-btn" data-sport="nfl" aria-label="NFL">&#127944;</button>
+          <button class="sport-btn" data-sport="cricket" aria-label="Cricket">&#127951;</button>
         </div>
       </div>
       <div class="header-right">
@@ -155,6 +161,6 @@
 
   <div id="toast" class="toast"></div>
 
-  <script type="module" src="js/app.js?v=9"></script>
+  <script type="module" src="js/app.js?v=10"></script>
 </body>
 </html>

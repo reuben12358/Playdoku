@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=9';
-import { GameState } from './game.js?v=9';
-import { showToast } from './utils.js?v=9';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=9';
-import { SPORTS } from './sports.js?v=9';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=10';
+import { GameState } from './game.js?v=10';
+import { showToast } from './utils.js?v=10';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=10';
+import { SPORTS } from './sports.js?v=10';
 
 let players = [];
 let puzzle = null;
@@ -514,6 +514,12 @@ function showRules(sportId, force = false) {
       ['Team Logos', 'Played for that NFL team at any point (past or present)'],
       ['Positions', 'Played that position (QB, RB, WR, TE, DE, LB, CB, Safety, OL)'],
       ['Awards', 'Won or earned that award (MVP, Super Bowl Champion, Super Bowl MVP, DPOY, or Pro Bowl)'],
+    ],
+    cricket: [
+      ['Team Logos', 'Played for that IPL team at any point (past or present)'],
+      ['Country Flags', 'The player\'s nationality (e.g. India = an Indian player)'],
+      ['Positions', 'Played that role (Batsman, Bowler, All-Rounder, or Wicket-Keeper)'],
+      ['Awards', 'Won that award (World Cup Winner, IPL Winner, or ICC Player of the Year)'],
     ],
   };
 
