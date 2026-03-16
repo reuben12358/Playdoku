@@ -39,10 +39,12 @@ export class GameState {
 
   makeGuess(row, col, playerName, isCorrect) {
     const key = `${row},${col}`;
-    // Allow retries on incorrect guesses, but lock correct ones
+    // Lock correct cells and cells that used all attempts
     if (this.cells[key]?.correct) return;
+    if (this.cells[key]?.attempts >= 3) return;
 
-    this.cells[key] = { correct: isCorrect, playerName };
+    const prevAttempts = this.cells[key]?.attempts || 0;
+    this.cells[key] = { correct: isCorrect, playerName, attempts: prevAttempts + 1 };
     this.guessesUsed++;
     this.saveState();
 
@@ -65,8 +67,9 @@ export class GameState {
   }
 
   isComplete() {
-    const correctCount = Object.values(this.cells).filter(c => c.correct).length;
-    return correctCount >= 9;
+    // Complete when all 9 cells are either correct or exhausted (3 failed attempts)
+    const lockedCount = Object.values(this.cells).filter(c => c.correct || c.attempts >= 3).length;
+    return lockedCount >= 9;
   }
 
   updateStats() {

@@ -457,6 +457,12 @@ main {
   opacity: 0.6;
 }
 
+.cell-failed {
+  color: var(--incorrect);
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
 .grid-cell .cell-plus {
   font-size: 1.5rem;
   color: #ccc;

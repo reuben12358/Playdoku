@@ -170,14 +170,18 @@ function renderGrid() {
       if (state && state.correct) {
         cell.classList.add('correct');
         cell.innerHTML = `<span class="cell-player">${state.playerName}</span>`;
+      } else if (state && state.attempts >= 3) {
+        // All 3 attempts used — locked with bold X
+        cell.classList.add('incorrect', 'locked');
+        cell.innerHTML = `<span class="cell-player cell-failed">\u2717</span>`;
       } else if (game.isComplete()) {
         cell.classList.add('locked');
         cell.innerHTML = `<span class="cell-plus">-</span>`;
       } else {
         if (state && !state.correct) {
-          // Show X but keep clickable for retry
+          // Show X with attempt count, still clickable
           cell.classList.add('incorrect');
-          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">\u2717</span>`;
+          cell.innerHTML = `<span class="cell-player" style="color:var(--incorrect)">\u2717 <small>${state.attempts}/3</small></span>`;
         } else {
           cell.innerHTML = `<span class="cell-plus">+</span>`;
         }
@@ -191,6 +195,8 @@ function renderGrid() {
 
 function openSearch(row, col) {
   if (game.isComplete()) return;
+  const cellState = game.getCellState(row, col);
+  if (cellState && cellState.attempts >= 3) return;
 
   selectedCell = { row, col };
   const rowCat = puzzle.rows[row];
