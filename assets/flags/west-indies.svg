@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400">
+  <!-- Maroon background -->
+  <rect width="600" height="400" fill="#800000"/>
+  <!-- Yellow/gold circle -->
+  <circle cx="300" cy="200" r="120" fill="#FFD700"/>
+  <!-- Palm tree trunk -->
+  <path d="M295 310 L300 180 L305 310 Z" fill="#5D3A1A"/>
+  <rect x="293" y="180" width="14" height="130" rx="3" fill="#6B4226"/>
+  <!-- Palm fronds -->
+  <path d="M300 180 Q240 130 180 150" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q250 120 200 110" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q280 110 260 90" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q360 130 420 150" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q350 120 400 110" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q320 110 340 90" stroke="#006400" stroke-width="6" fill="none"/>
+  <path d="M300 180 Q300 100 300 80" stroke="#006400" stroke-width="6" fill="none"/>
+  <!-- Palm leaf fills for fuller look -->
+  <path d="M300 180 Q240 130 180 150 Q230 135 300 180" fill="#228B22"/>
+  <path d="M300 180 Q250 120 200 110 Q240 108 300 180" fill="#228B22"/>
+  <path d="M300 180 Q280 110 260 90 Q275 95 300 180" fill="#228B22"/>
+  <path d="M300 180 Q360 130 420 150 Q370 135 300 180" fill="#228B22"/>
+  <path d="M300 180 Q350 120 400 110 Q360 108 300 180" fill="#228B22"/>
+  <path d="M300 180 Q320 110 340 90 Q325 95 300 180" fill="#228B22"/>
+  <!-- Cricket stumps -->
+  <rect x="270" y="280" width="4" height="35" fill="#F5DEB3"/>
+  <rect x="298" y="280" width="4" height="35" fill="#F5DEB3"/>
+  <rect x="326" y="280" width="4" height="35" fill="#F5DEB3"/>
+  <!-- Bails on stumps -->
+  <rect x="268" y="278" width="10" height="3" rx="1" fill="#F5DEB3"/>
+  <rect x="296" y="278" width="10" height="3" rx="1" fill="#F5DEB3"/>
+  <rect x="322" y="278" width="10" height="3" rx="1" fill="#F5DEB3"/>
+</svg>

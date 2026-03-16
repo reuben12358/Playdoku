@@ -199,7 +199,7 @@ export const SPORTS = {
         { id: 'england_cricket', label: 'England', value: 'England', type: 'country', flag: 'gb-eng' },
         { id: 'south_africa', label: 'South Africa', value: 'South Africa', type: 'country', flag: 'za' },
         { id: 'new_zealand', label: 'New Zealand', value: 'New Zealand', type: 'country', flag: 'nz' },
-        { id: 'west_indies', label: 'West Indies', value: 'West Indies', type: 'country', emoji: '\u{1F334}' },
+        { id: 'west_indies', label: 'West Indies', value: 'West Indies', type: 'country', flagUrl: 'assets/flags/west-indies.svg' },
         { id: 'pakistan', label: 'Pakistan', value: 'Pakistan', type: 'country', flag: 'pk' },
         { id: 'sri_lanka', label: 'Sri Lanka', value: 'Sri Lanka', type: 'country', flag: 'lk' },
         { id: 'bangladesh', label: 'Bangladesh', value: 'Bangladesh', type: 'country', flag: 'bd' },
