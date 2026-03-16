@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber, injectRareAchievement, validatePuzzle } from './puzzle.js?v=18';
-import { GameState } from './game.js?v=18';
-import { showToast } from './utils.js?v=18';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=18';
-import { SPORTS } from './sports.js?v=18';
+import { generatePuzzle, getPuzzleNumber, injectRareAchievement, validatePuzzle } from './puzzle.js?v=19';
+import { GameState } from './game.js?v=19';
+import { showToast } from './utils.js?v=19';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=19';
+import { SPORTS } from './sports.js?v=19';
 
 let players = [];
 let puzzle = null;
@@ -91,9 +91,15 @@ async function init(sportId) {
     return true;
   });
 
-  // Load variation from storage or use 0
-  const savedVar = localStorage.getItem(`playdoku_variation_${sportId}`);
-  currentVariation = savedVar ? parseInt(savedVar, 10) : 0;
+  // Load variation from storage, reset to 0 on a new day
+  const today = new Date().toDateString();
+  const savedVarData = JSON.parse(localStorage.getItem(`playdoku_variation_${sportId}`) || 'null');
+  if (savedVarData && savedVarData.date === today) {
+    currentVariation = savedVarData.variation;
+  } else {
+    currentVariation = 0;
+    localStorage.setItem(`playdoku_variation_${sportId}`, JSON.stringify({ variation: 0, date: today }));
+  }
 
   puzzle = generatePuzzle(players, sport.categories, sport.seedOffset, currentVariation);
   puzzle = enforceCountryRule(puzzle);
@@ -451,7 +457,7 @@ async function refreshPuzzle() {
   const wasCompleted = game && game.isComplete();
 
   currentVariation++;
-  localStorage.setItem(`playdoku_variation_${currentSport.id}`, currentVariation);
+  localStorage.setItem(`playdoku_variation_${currentSport.id}`, JSON.stringify({ variation: currentVariation, date: new Date().toDateString() }));
   // Clear game state for current sport
   localStorage.removeItem(`playdoku_state_${currentSport.id}`);
   puzzle = generatePuzzle(players, currentSport.categories, currentSport.seedOffset, currentVariation);
@@ -651,8 +657,32 @@ function setupThemeToggle() {
   });
 }
 
+// Auto-refresh at midnight local time
+function scheduleMidnightRefresh() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setDate(midnight.getDate() + 1);
+  midnight.setHours(0, 0, 0, 0);
+  const msUntilMidnight = midnight - now;
+
+  setTimeout(() => {
+    // Reset variation to 0 for the new day
+    if (currentSport) {
+      currentVariation = 0;
+      const today = new Date().toDateString();
+      localStorage.setItem(`playdoku_variation_${currentSport.id}`, JSON.stringify({ variation: 0, date: today }));
+      localStorage.removeItem(`playdoku_state_${currentSport.id}`);
+      init(currentSport.id);
+      showToast('New daily puzzle!');
+    }
+    // Schedule the next midnight
+    scheduleMidnightRefresh();
+  }, msUntilMidnight);
+}
+
 // Start app
 setupLanding();
 setupModals();
 setupHomeButton();
 setupThemeToggle();
+scheduleMidnightRefresh();
