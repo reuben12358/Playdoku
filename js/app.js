@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=16';
-import { GameState } from './game.js?v=16';
-import { showToast } from './utils.js?v=16';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=16';
-import { SPORTS } from './sports.js?v=16';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=17';
+import { GameState } from './game.js?v=17';
+import { showToast } from './utils.js?v=17';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=17';
+import { SPORTS } from './sports.js?v=17';
 
 let players = [];
 let puzzle = null;
@@ -608,14 +608,16 @@ function setupThemeToggle() {
   const saved = localStorage.getItem('playdoku_theme');
   if (saved === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    btn.textContent = '\u2600'; // sun
+    btn.textContent = '\u2600'; // sun for light mode switch
+  } else {
+    btn.textContent = '\u{1F319}'; // crescent moon for dark mode switch
   }
 
   btn.addEventListener('click', () => {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     if (isDark) {
       document.documentElement.removeAttribute('data-theme');
-      btn.textContent = '\u263E'; // moon
+      btn.textContent = '\u{1F319}'; // crescent moon
       localStorage.setItem('playdoku_theme', 'light');
     } else {
       document.documentElement.setAttribute('data-theme', 'dark');
