@@ -268,6 +268,15 @@ async function selectPlayer(player) {
   const rowCat = puzzle.rows[row];
   const colCat = puzzle.cols[col];
 
+  // Check if this player is already used in another correct cell
+  const alreadyUsed = game.isPlayerUsed(player.name);
+  if (alreadyUsed) {
+    closeModal('search-modal');
+    showToast('Player already used!');
+    selectedCell = null;
+    return;
+  }
+
   // Enrich player with API data so recent transfers/full career are included
   const enriched = await enrichPlayerData(player);
 

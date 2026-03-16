@@ -55,6 +55,11 @@ export class GameState {
     return this.cells[`${row},${col}`] || null;
   }
 
+  isPlayerUsed(name) {
+    const lower = name.toLowerCase();
+    return Object.values(this.cells).some(c => c.correct && c.playerName.toLowerCase() === lower);
+  }
+
   getScore() {
     return Object.values(this.cells).filter(c => c.correct).length;
   }
