@@ -57,6 +57,14 @@ export const SPORTS = {
         { id: 'ucl', label: 'UCL Winner', value: 'Champions League', type: 'award', emoji: '\u{1F3C6}' },
       ],
     },
+    rareAchievements: [
+      { id: 'golden_boot', label: 'Golden Boot Winner', value: 'Golden Boot Winner', type: 'rare_achievement', emoji: '\u{1F45F}' },
+      { id: 'golden_glove', label: 'Golden Glove Winner', value: 'Golden Glove Winner', type: 'rare_achievement', emoji: '\u{1F9E4}' },
+      { id: 'hat_trick_goal', label: 'Scored a Hat-trick', value: 'Scored a Hat-trick', type: 'rare_achievement', emoji: '\u{1F3A9}' },
+      { id: 'direct_free_kick', label: 'Direct Free Kick Goal', value: 'Scored a Direct Free Kick', type: 'rare_achievement', emoji: '\u{1F3AF}' },
+      { id: 'bicycle_kick', label: 'Scored a Bicycle Kick', value: 'Scored a Bicycle Kick', type: 'rare_achievement', emoji: '\u{1F6B2}' },
+      { id: 'red_card', label: 'Obtained a Red Card', value: 'Obtained a Red Card', type: 'rare_achievement', emoji: '\u{1F7E5}' },
+    ],
   },
   basketball: {
     id: 'basketball',
@@ -218,5 +226,13 @@ export const SPORTS = {
         { id: 'icc_poty', label: 'ICC Player of the Year', value: 'ICC Player of the Year', type: 'award', emoji: '\u{1F3C6}' },
       ],
     },
+    rareAchievements: [
+      { id: 'hat_trick_bowl', label: 'Bowled a Hat-trick', value: 'Bowled a Hat-trick', type: 'rare_achievement', emoji: '\u{1F3A9}' },
+      { id: 'most_wickets_ipl', label: 'Most Wickets in IPL Season', value: 'Most Wickets in IPL Season', type: 'rare_achievement', emoji: '\u{1F3CF}' },
+      { id: 'most_runs_ipl', label: 'Most Runs in IPL Season', value: 'Most Runs in IPL Season', type: 'rare_achievement', emoji: '\u{1F3CF}' },
+      { id: 'century_under_50', label: '100 under 50 Balls', value: 'Scored 100 under 50 Balls', type: 'rare_achievement', emoji: '\u26A1' },
+      { id: 'scored_150_plus', label: '150+ in a Single Game', value: 'Scored 150+ in a Single Game', type: 'rare_achievement', emoji: '\u{1F525}' },
+      { id: 'five_wickets', label: '5+ Wickets in a Match', value: '5+ Wickets in a Single Match', type: 'rare_achievement', emoji: '\u{1F4A5}' },
+    ],
   },
 };

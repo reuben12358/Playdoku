@@ -52,6 +52,7 @@ function matchesCat(player, cat) {
     case 'league': return player.leagues && player.leagues.some(l => l.toLowerCase() === cat.value.toLowerCase());
     case 'position': return player.positions && player.positions.some(p => p.toLowerCase() === cat.value.toLowerCase());
     case 'award': return player.awards && player.awards.some(a => a.toLowerCase() === cat.value.toLowerCase());
+    case 'rare_achievement': return player.rareAchievements && player.rareAchievements.some(a => a.toLowerCase() === cat.value.toLowerCase());
     default: return false;
   }
 }
@@ -76,7 +77,7 @@ function isValidLayout(rows, cols) {
   return true;
 }
 
-function validatePuzzle(players, rows, cols) {
+export function validatePuzzle(players, rows, cols) {
   // Hard layout check first
   if (!isValidLayout(rows, cols)) return false;
 
@@ -177,4 +178,30 @@ export function generatePuzzle(players, categories, seedOffset = 0, variation = 
     cols: [clubsShuffled[3], clubsShuffled[4], clubsShuffled[5]],
     seed,
   };
+}
+
+export function injectRareAchievement(puzzle, players, rareAchievements, variation) {
+  const rng = mulberry32(variation * 7 + 13);
+  const shuffledRare = shuffle(rareAchievements, rng);
+
+  // Pick one axis randomly, try to replace one slot with a rare achievement
+  const useRow = rng() < 0.5;
+  const axis = useRow ? 'rows' : 'cols';
+
+  for (const rareCat of shuffledRare) {
+    if (countMatches(players, rareCat) < 2) continue;
+
+    for (let slot = 0; slot < 3; slot++) {
+      const original = puzzle[axis][slot];
+      puzzle[axis][slot] = rareCat;
+
+      if (validatePuzzle(players, puzzle.rows, puzzle.cols)) {
+        return puzzle;
+      }
+
+      puzzle[axis][slot] = original;
+    }
+  }
+
+  return puzzle;
 }

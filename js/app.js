@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=17';
-import { GameState } from './game.js?v=17';
-import { showToast } from './utils.js?v=17';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=17';
-import { SPORTS } from './sports.js?v=17';
+import { generatePuzzle, getPuzzleNumber, injectRareAchievement, validatePuzzle } from './puzzle.js?v=18';
+import { GameState } from './game.js?v=18';
+import { showToast } from './utils.js?v=18';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=18';
+import { SPORTS } from './sports.js?v=18';
 
 let players = [];
 let puzzle = null;
@@ -49,6 +49,7 @@ function getTooltip(cat) {
     case 'league': return `Played in ${cat.label}`;
     case 'position': return `Position: ${cat.label}`;
     case 'award': return `${cat.label} winner`;
+    case 'rare_achievement': return cat.label;
     default: return cat.label;
   }
 }
@@ -139,6 +140,7 @@ function renderGrid() {
   puzzle.cols.forEach(cat => {
     const header = document.createElement('div');
     header.className = 'grid-header col-header';
+    if (cat.type === 'rare_achievement') header.classList.add('rare-achievement');
     header.title = getTooltip(cat);
     header.innerHTML = renderHeaderContent(cat);
     container.appendChild(header);
@@ -147,6 +149,7 @@ function renderGrid() {
   puzzle.rows.forEach((rowCat, r) => {
     const rowHeader = document.createElement('div');
     rowHeader.className = 'grid-header row-header';
+    if (rowCat.type === 'rare_achievement') rowHeader.classList.add('rare-achievement');
     rowHeader.title = getTooltip(rowCat);
     rowHeader.innerHTML = renderHeaderContent(rowCat);
     container.appendChild(rowHeader);
@@ -306,6 +309,7 @@ async function enrichPlayerData(player) {
       country: player.country || apiMatch.country,
       leagues: [...new Set([...(player.leagues || []), ...(apiMatch.leagues || [])])],
       awards: [...new Set([...(player.awards || []), ...(apiMatch.awards || [])])],
+      rareAchievements: player.rareAchievements || [],
     };
   } catch (e) {
     return player;
@@ -331,6 +335,8 @@ function matchesCategory(player, category) {
       return player.positions && player.positions.some(p => fuzzyMatch(p, val));
     case 'award':
       return player.awards && player.awards.some(a => fuzzyMatch(a, val));
+    case 'rare_achievement':
+      return player.rareAchievements && player.rareAchievements.some(a => fuzzyMatch(a, val));
     default:
       return false;
   }
@@ -431,12 +437,21 @@ function setupSportToggle() {
 
 async function refreshPuzzle() {
   if (!currentSport) return;
+
+  // Check if the just-finished puzzle was completed (for rare achievement easter egg)
+  const wasCompleted = game && game.isComplete();
+
   currentVariation++;
   localStorage.setItem(`playdoku_variation_${currentSport.id}`, currentVariation);
   // Clear game state for current sport
   localStorage.removeItem(`playdoku_state_${currentSport.id}`);
   puzzle = generatePuzzle(players, currentSport.categories, currentSport.seedOffset, currentVariation);
   puzzle = enforceCountryRule(puzzle);
+
+  // Inject a rare achievement if previous puzzle was completed
+  if (wasCompleted && currentSport.rareAchievements && currentSport.rareAchievements.length > 0) {
+    puzzle = injectRareAchievement(puzzle, players, currentSport.rareAchievements, currentVariation);
+  }
 
   // Fetch logos for new puzzle's club categories
   const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
