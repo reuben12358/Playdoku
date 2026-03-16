@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=14';
-import { GameState } from './game.js?v=14';
-import { showToast } from './utils.js?v=14';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=14';
-import { SPORTS } from './sports.js?v=14';
+import { generatePuzzle, getPuzzleNumber } from './puzzle.js?v=15';
+import { GameState } from './game.js?v=15';
+import { showToast } from './utils.js?v=15';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=15';
+import { SPORTS } from './sports.js?v=15';
 
 let players = [];
 let puzzle = null;
@@ -101,11 +101,11 @@ async function init(sportId) {
   const clubCats = [...puzzle.rows, ...puzzle.cols].filter(c => c.type === 'club');
   await Promise.all(clubCats.map(async (cat) => {
     if (!cat.logo) {
-      // Use logoUrl from config if available, otherwise fetch from TheSportsDB
       if (cat.logoUrl) {
         cat.logo = cat.logoUrl;
       } else {
-        cat.logo = await getTeamLogo(cat.value);
+        // Try searchName first (for teams with different names on TheSportsDB), then value
+        cat.logo = await getTeamLogo(cat.searchName || cat.value);
       }
     }
   }));
@@ -445,7 +445,7 @@ async function refreshPuzzle() {
       if (cat.logoUrl) {
         cat.logo = cat.logoUrl;
       } else {
-        cat.logo = await getTeamLogo(cat.value);
+        cat.logo = await getTeamLogo(cat.searchName || cat.value);
       }
     }
   }));

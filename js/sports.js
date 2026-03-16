@@ -184,7 +184,7 @@ export const SPORTS = {
       clubs: [
         { id: 'csk', label: 'CSK', value: 'Chennai Super Kings', type: 'club', emoji: '\u{1F49B}' },
         { id: 'mi', label: 'Mumbai Indians', value: 'Mumbai Indians', type: 'club', emoji: '\u{1F535}' },
-        { id: 'rcb', label: 'RCB', value: 'Royal Challengers Bengaluru', type: 'club', emoji: '\u{1F534}' },
+        { id: 'rcb', label: 'RCB', value: 'Royal Challengers Bengaluru', type: 'club', emoji: '\u{1F534}', searchName: 'Royal Challengers Bangalore' },
         { id: 'kkr', label: 'KKR', value: 'Kolkata Knight Riders', type: 'club', emoji: '\u{1F49C}' },
         { id: 'srh', label: 'SRH', value: 'Sunrisers Hyderabad', type: 'club', emoji: '\u{1F7E0}' },
         { id: 'dc', label: 'Delhi Capitals', value: 'Delhi Capitals', type: 'club', emoji: '\u{1F535}\u{1F534}' },

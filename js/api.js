@@ -1,6 +1,15 @@
 const searchCache = new Map();
 const logoCache = {};
 
+// Clear stale logo cache from previous versions (broken Wikipedia URLs)
+const LOGO_CACHE_VERSION = 2;
+if (localStorage.getItem('logo_cache_version') !== String(LOGO_CACHE_VERSION)) {
+  Object.keys(localStorage).forEach(key => {
+    if (key.startsWith('team_logo_')) localStorage.removeItem(key);
+  });
+  localStorage.setItem('logo_cache_version', String(LOGO_CACHE_VERSION));
+}
+
 export async function getTeamLogo(teamName) {
   if (logoCache[teamName] !== undefined) return logoCache[teamName];
 
