@@ -1,8 +1,8 @@
-import { generatePuzzle, getPuzzleNumber, injectRareAchievement, validatePuzzle } from './puzzle.js?v=19';
-import { GameState } from './game.js?v=19';
-import { showToast } from './utils.js?v=19';
-import { searchPlayersAPI, getTeamLogo } from './api.js?v=19';
-import { SPORTS } from './sports.js?v=19';
+import { generatePuzzle, getPuzzleNumber, injectRareAchievement, validatePuzzle } from './puzzle.js?v=20';
+import { GameState } from './game.js?v=20';
+import { showToast } from './utils.js?v=20';
+import { searchPlayersAPI, getTeamLogo } from './api.js?v=20';
+import { SPORTS } from './sports.js?v=20';
 
 let players = [];
 let puzzle = null;

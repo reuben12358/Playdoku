@@ -86,12 +86,14 @@ export async function searchPlayersAPI(query, sportFilter = 'Soccer') {
       const countryQIds = getClaimIds(claims.P27);
       const teamQIds = getClaimIds(claims.P54);
       const positionQIds = getClaimIds(claims.P413);
+      const awardQIds = getClaimIds(claims.P166);
 
       countryQIds.forEach(id => refIds.add(id));
       teamQIds.forEach(id => refIds.add(id));
       positionQIds.forEach(id => refIds.add(id));
+      awardQIds.forEach(id => refIds.add(id));
 
-      playerData.push({ qid, name, countryQIds, teamQIds, positionQIds });
+      playerData.push({ qid, name, countryQIds, teamQIds, positionQIds, awardQIds });
     }
 
     // Step 3: Batch resolve all referenced entity labels
@@ -107,6 +109,8 @@ export async function searchPlayersAPI(query, sportFilter = 'Soccer') {
       const clubs = p.teamQIds.map(id => labelMap[id]).filter(Boolean);
       const rawPositions = p.positionQIds.map(id => labelMap[id]).filter(Boolean);
       const positions = mapFn(rawPositions.join(', '));
+      const rawAwards = p.awardQIds.map(id => ({ id, label: labelMap[id] })).filter(a => a.label);
+      const awards = mapAwards(rawAwards, sportFilter);
 
       return {
         name: p.name,
@@ -114,7 +118,7 @@ export async function searchPlayersAPI(query, sportFilter = 'Soccer') {
         clubs,
         positions,
         leagues: [],
-        awards: [],
+        awards,
         fromAPI: true,
       };
     });
@@ -159,6 +163,67 @@ async function resolveLabels(qids) {
   }
 
   return labelMap;
+}
+
+// Wikidata QIDs for key awards we care about
+const AWARD_MAP = {
+  // Football
+  'Q166177': "Ballon d'Or",          // Ballon d'Or
+  'Q181888': 'World Cup',            // FIFA World Cup (won by country)
+  'Q18756': 'Champions League',      // UEFA Champions League
+  // Basketball
+  'Q222047': 'MVP',                  // NBA MVP
+  'Q1478498': 'NBA Champion',        // NBA championship
+  'Q1357879': 'Finals MVP',          // NBA Finals MVP
+  'Q844925': 'DPOY',                 // NBA DPOY
+  'Q549750': 'All-Star',             // NBA All-Star
+  // NFL
+  'Q222047': 'MVP',                  // NFL MVP (shares QID context)
+  'Q32096': 'Super Bowl Champion',   // Super Bowl
+  'Q1457981': 'Super Bowl MVP',      // Super Bowl MVP
+  'Q1146997': 'Pro Bowl',            // Pro Bowl
+  // Cricket
+  'Q1003744': 'World Cup Winner',    // Cricket World Cup
+};
+
+// Keyword-based fallback matching for awards Wikidata labels
+const AWARD_KEYWORDS = [
+  { pattern: /ballon d.or/i, value: "Ballon d'Or" },
+  { pattern: /fifa world cup(?! qualif)/i, value: 'World Cup' },
+  { pattern: /uefa champions league/i, value: 'Champions League' },
+  { pattern: /\bsuper bowl\b(?!.*mvp)/i, value: 'Super Bowl Champion' },
+  { pattern: /super bowl.*(mvp|most valuable)/i, value: 'Super Bowl MVP' },
+  { pattern: /\bnba\b.*\bchampion/i, value: 'NBA Champion' },
+  { pattern: /\bnba\b.*\bmvp\b|nba most valuable/i, value: 'MVP' },
+  { pattern: /\bnba\b.*finals.*mvp/i, value: 'Finals MVP' },
+  { pattern: /defensive player of the year/i, value: 'DPOY' },
+  { pattern: /\ball.star\b|\ball star\b/i, value: 'All-Star' },
+  { pattern: /\bpro bowl\b/i, value: 'Pro Bowl' },
+  { pattern: /icc cricket world cup/i, value: 'World Cup Winner' },
+  { pattern: /indian premier league|ipl.*winner|ipl.*champion/i, value: 'IPL Winner' },
+  { pattern: /icc.*player.*year/i, value: 'ICC Player of the Year' },
+];
+
+function mapAwards(rawAwards, sportFilter) {
+  const mapped = new Set();
+
+  for (const award of rawAwards) {
+    // Try direct QID match first
+    if (AWARD_MAP[award.id]) {
+      mapped.add(AWARD_MAP[award.id]);
+      continue;
+    }
+
+    // Fallback: keyword match on the award label
+    for (const rule of AWARD_KEYWORDS) {
+      if (rule.pattern.test(award.label)) {
+        mapped.add(rule.value);
+        break;
+      }
+    }
+  }
+
+  return [...mapped];
 }
 
 function mapFootballPosition(pos) {
